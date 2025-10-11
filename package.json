@@ -1,0 +1,13 @@
+{
+  "name": "no-helmet-game",
+  "version": "1.0.0",
+  "description": "Maze game where Labour earns a Helmet",
+  "main": "src/index.html",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

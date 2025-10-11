@@ -1,0 +1,168 @@
+# Maze Game Specification
+
+## Game Overview
+A 2D maze navigation game with a 30-second time limit where the player controls a "Labour" character to navigate through a complex maze with many fake paths and touch the helmet at the finish point to win.
+
+## Technical Requirements
+- **Framework**: Odyc.js
+- **Language**: TypeScript
+- **Target**: Web browser
+
+## Core Gameplay
+
+### Player Character
+- **Name**: Labour
+- **Movement**: Grid-based movement
+- **Controls**: 
+  - W: Move up
+  - S: Move down  
+  - A: Move left
+  - D: Move right
+
+### Timer System
+- **Duration**: 30 seconds countdown
+- **Trigger**: Starts on first WASD key press
+- **Display**: Real-time countdown visible to player
+- **Timeout**: Shows "No Helmet" message when time expires
+
+### Maze System
+- **Generation**: Random maze layout with guaranteed solution path
+- **Complexity**: Highly complex with BFS distance evaluation between min/max paths
+- **Structure**: Grid-based with walls, correct paths, and numerous misleading dead ends
+- **Path Width**: All walkable paths are exactly 1x1 unit (single cell width)
+- **Fake Paths**: Extensive complex dead-end branches to create maximum confusion
+- **Start Point**: Fixed entry position at (1,1)
+- **Helmet Location**: Fixed at bottom right corner (size-2, size-2)
+- **Complexity Evaluation**: BFS analysis to ensure optimal min/max path difference
+- **Accessibility**: Helmet position is always reachable from start via pathfinding validation
+- **Wall Constraint**: Walls must not block helmet - helmet placed in open path
+- **Collision**: Labour cannot move through walls
+
+### Win/Lose Conditions
+- **Win**: Labour reaches and touches helmet at finish point within 30 seconds
+- **Lose**: Timer expires before touching helmet - show "No Helmet" message
+- **Retry**: Button appears after game ends to restart with new complex maze
+
+## Game Components
+
+### Core Classes (TypeScript)
+```typescript
+interface Position {
+  x: number;
+  y: number;
+}
+
+class Timer {
+  duration: number = 30;
+  remaining: number = 30;
+  active: boolean = false;
+  start(): void;
+  update(): void;
+  isExpired(): boolean;
+}
+
+class Labour {
+  position: Position;
+  move(direction: 'up' | 'down' | 'left' | 'right'): void;
+  isAtPosition(pos: Position): boolean;
+}
+
+class Maze {
+  grid: number[][];
+  startPosition: Position;
+  helmetPosition: Position; // Fixed at bottom right
+  generate(): void;
+  addExtensiveFakePaths(): void;
+  evaluateBFSComplexity(): { minDistance: number; maxDistance: number; difference: number };
+  validateHelmetAccessibility(): boolean;
+  ensureSingleWidthPaths(): void;
+  isValidMove(position: Position): boolean;
+  isPath(position: Position): boolean;
+}
+
+class Game {
+  labour: Labour;
+  maze: Maze;
+  timer: Timer;
+  gameState: 'waiting' | 'playing' | 'won' | 'lost';
+  handleInput(key: string): void;
+  checkHelmetTouch(): boolean;
+  checkTimeExpired(): boolean;
+  showRetryButton(): void;
+  restart(): void;
+  render(): void;
+}
+```
+
+### Maze Generation Requirements
+- **Base Path**: Generate comprehensive path network with single-width corridors
+- **Extensive Fake Paths**: Add numerous misleading branches of varying lengths
+- **Path Width Control**: Ensure all walkable paths are exactly 1x1 unit (single cell)
+- **Fixed Helmet Placement**: Helmet always at bottom right corner (size-2, size-2)
+- **BFS Complexity Evaluation**: Analyze min/max path distances to optimize difficulty
+- **Accessibility Validation**: Verify helmet position is reachable via pathfinding
+- **Wall Placement**: Ensure helmet is placed in open path, never blocked by walls
+- **Complexity Metrics**: Use BFS distance difference to measure maze difficulty
+
+### Input System
+- Listen for keydown events
+- Map WASD keys to movement directions
+- Start timer on first movement
+- Validate moves against maze walls
+- Update Labour position if valid
+
+### Timer System
+- 30-second countdown display
+- Starts when first WASD key is pressed
+- Updates every second
+- Triggers game over when expired
+
+### Game States
+- **Waiting**: Before first move, timer not started
+- **Playing**: Timer active, player can move
+- **Won**: Labour touched helmet within time limit
+- **Lost**: Timer expired before touching helmet
+
+### UI Elements
+- **Timer Display**: Shows remaining seconds
+- **Status Messages**: Game instructions and results
+- **Retry Button**: Appears after win/lose to restart game
+
+## Game Flow
+1. Generate random maze with comprehensive single-width path network
+2. Add extensive complex fake dead-end paths to maximize confusion
+3. Ensure all paths are exactly 1x1 unit width (single cell corridors)
+4. Place helmet at fixed bottom right position (size-2, size-2)
+5. Evaluate BFS complexity by analyzing min/max path distances
+6. Validate helmet accessibility and path complexity meets requirements
+7. Place Labour at fixed start position (1,1)
+8. Wait for first WASD input to start timer
+9. Listen for WASD input and move Labour
+10. Update timer countdown display
+11. Check if Labour touched helmet at bottom right (win condition)
+12. Check if timer expired (lose condition)
+13. Show result message and retry button
+14. Allow restart with new complex maze and BFS complexity evaluation
+
+## Visual Elements
+- **Labour**: Distinct character sprite/icon
+- **Walls**: Solid barriers that never block helmet
+- **Paths**: Clear walkable areas (both correct and fake)
+- **Complex Dead Ends**: Multiple misleading paths of varying lengths
+- **Start**: Green marker or distinct starting area
+- **Helmet**: Goal object at accessible finish position
+- **Timer**: Countdown display (30, 29, 28...)
+- **Victory**: Helmet earned message
+- **Defeat**: "No Helmet" message
+- **Retry Button**: Restart game option
+
+## Maze Complexity Requirements
+- **Minimum Fake Paths**: At least 25-35 dead-end branches for maximum complexity
+- **Path Width**: All walkable paths exactly 1x1 unit (single cell width)
+- **Path Variation**: Extensive different lengths and directions for fake paths
+- **Misleading Routes**: Multiple paths that seem promising but lead nowhere
+- **BFS Complexity**: Evaluate min/max path distances to ensure optimal difficulty
+- **Solution Obscurity**: True path should be highly obscured by fake routes
+- **Fixed Helmet**: Helmet location at bottom right corner (size-2, size-2)
+- **Accessibility Guarantee**: Always ensure helmet can be reached from start
+- **Complexity Threshold**: BFS distance difference must meet minimum complexity requirements

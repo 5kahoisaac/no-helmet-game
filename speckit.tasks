@@ -1,0 +1,114 @@
+# Implementation Tasks
+
+## Setup Tasks
+- [ ] Install Odyc.js and TypeScript
+- [ ] Create project structure (src/, dist/)
+- [ ] Setup TypeScript configuration
+- [ ] Create HTML template with timer and retry UI
+
+## Timer System
+- [ ] Implement Timer class with 30-second countdown
+- [ ] Add timer display in HTML/CSS
+- [ ] Start timer on first WASD key press
+- [ ] Update timer display every second
+- [ ] Trigger game over when timer expires
+
+## Single-Width Path Generation
+- [ ] Implement single-width path network generation (1x1 corridors only)
+- [ ] Add path width enforcement during maze generation
+- [ ] Ensure no corridors wider than single cell
+- [ ] Validate all walkable paths are exactly 1x1 unit
+- [ ] Prevent wide road generation throughout maze
+
+## Highly Complex Maze Generation
+- [ ] Implement comprehensive single-width path network (recursive backtracking)
+- [ ] Add extensive fake path system (25-35 dead-end branches)
+- [ ] Create variable length fake paths (2-12 cells deep) with 1x1 width
+- [ ] Add multiple branching directions with sub-branches
+- [ ] Ensure misleading routes with false hope patterns
+
+## Fixed Helmet Placement System
+- [ ] Implement fixed helmet placement at bottom right (size-2, size-2)
+- [ ] Remove random helmet location logic
+- [ ] Ensure helmet position is always at consistent location
+- [ ] Validate helmet placement in open path at bottom right
+- [ ] Guarantee helmet accessibility from start to fixed position
+
+## BFS Complexity Evaluation System
+- [ ] Implement BFS shortest path calculation from start to helmet
+- [ ] Create BFS longest path analysis in maze network
+- [ ] Calculate min/max distance difference for complexity measurement
+- [ ] Add complexity threshold validation
+- [ ] Implement maze regeneration if complexity insufficient
+
+## Enhanced Accessibility Validation System
+- [ ] Implement BFS pathfinding algorithm for fixed helmet location
+- [ ] Create helmet accessibility validation function for bottom right position
+- [ ] Add maze regeneration logic if helmet unreachable at fixed location
+- [ ] Ensure helmet placement validation at consistent position
+- [ ] Validate every maze before game start with fixed helmet
+
+## Core Development
+- [ ] Build Labour class with emoji rendering and fixed helmet touch detection
+- [ ] Develop Game class with state management (waiting/playing/won/lost)
+- [ ] Add WASD input handling with timer activation
+- [ ] Implement collision detection and movement validation
+
+## Emoji Rendering System
+- [ ] Setup canvas text rendering for emojis
+- [ ] Render 🚧 for maze walls
+- [ ] Display 👨🏻‍🔧 for Labour during gameplay
+- [ ] Show 🪖 at fixed bottom right helmet position
+- [ ] Change to 👷🏻‍♂️ when player wins
+
+## Game Logic
+- [ ] Movement validation with collision detection
+- [ ] Fixed helmet touch detection at bottom right position
+- [ ] Win condition when Labour touches helmet at (size-2, size-2)
+- [ ] Lose condition when timer expires
+- [ ] Game state transitions (waiting→playing→won/lost)
+
+## BFS Complexity Validation
+- [ ] Test BFS min distance calculation accuracy
+- [ ] Verify BFS max distance analysis correctness
+- [ ] Ensure complexity difference meets threshold requirements
+- [ ] Test maze regeneration when complexity insufficient
+- [ ] Validate BFS evaluation provides optimal difficulty
+
+## Path Width Validation
+- [ ] Test all paths are exactly 1x1 unit width
+- [ ] Verify no wide corridors exist in generated mazes
+- [ ] Ensure single-cell navigation throughout maze
+- [ ] Test path width enforcement during generation
+- [ ] Validate precise navigation requirements
+
+## Enhanced Quality Assurance
+- [ ] Test maze complexity with BFS evaluation (25-35 fake paths)
+- [ ] Verify helmet accessibility at fixed bottom right position
+- [ ] Ensure maze regeneration works with BFS complexity validation
+- [ ] Test that walls never block helmet at bottom right
+- [ ] Validate solution path always exists to fixed helmet location
+- [ ] Test BFS complexity provides appropriate 30-second challenge
+
+## Fixed Location Validation
+- [ ] Test helmet placement always at bottom right (size-2, size-2)
+- [ ] Verify accessibility validation works for fixed location
+- [ ] Ensure consistent helmet position across all games
+- [ ] Test pathfinding accuracy to fixed helmet position
+- [ ] Validate retry maintains fixed helmet location
+
+## UI Implementation
+- [ ] Timer countdown display
+- [ ] Status message updates
+- [ ] "No Helmet" message on timeout
+- [ ] Retry button functionality
+- [ ] Game restart with new BFS-evaluated maze and fixed helmet location
+
+## Polish
+- [ ] Add CSS styling for timer and UI elements
+- [ ] Test all movement directions work correctly
+- [ ] Verify timer starts only on first move
+- [ ] Ensure retry generates new BFS-validated maze with fixed helmet
+- [ ] Test single-width paths provide appropriate navigation challenge
+- [ ] Verify BFS complexity evaluation creates optimal difficulty
+- [ ] Build and bundle for deployment

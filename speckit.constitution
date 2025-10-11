@@ -1,0 +1,33 @@
+# Project Constitution
+
+## Code Quality Principles
+
+- **Readability First**: Code must be self-documenting with clear variable names and logical structure
+- **Single Responsibility**: Each function/class should have one clear purpose
+- **DRY Principle**: Eliminate code duplication through proper abstraction
+- **Error Handling**: All functions must handle edge cases and provide meaningful error messages
+- **Type Safety**: Use strict typing where available to prevent runtime errors
+
+## Testing Standards
+
+- **Test Coverage**: Minimum 80% code coverage for all new features
+- **Test Types**: Unit tests for logic, integration tests for workflows, E2E tests for critical paths
+- **Test Naming**: Tests must clearly describe what they verify: `should_return_error_when_invalid_input`
+- **Fast Tests**: Unit tests must run in under 100ms each
+- **Isolated Tests**: No test dependencies - each test runs independently
+
+## User Experience Consistency
+
+- **Response Times**: All user interactions must respond within 200ms
+- **Visual Consistency**: Maintain consistent spacing, colors, and typography across all interfaces
+- **Accessibility**: Support keyboard navigation and screen readers (WCAG 2.1 AA compliance)
+- **Error States**: Provide clear, actionable error messages with recovery suggestions
+- **Loading States**: Show progress indicators for operations taking >500ms
+
+## Performance Requirements
+
+- **Bundle Size**: Keep JavaScript bundles under 250KB gzipped
+- **Memory Usage**: Monitor and prevent memory leaks in long-running processes
+- **Database Queries**: Optimize queries to run under 50ms average response time
+- **Caching**: Implement appropriate caching strategies for frequently accessed data
+- **Resource Optimization**: Compress images and minify assets for production builds

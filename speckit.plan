@@ -1,0 +1,185 @@
+# Minimal Implementation Plan
+
+## Dependencies
+- **Odyc.js**: Core game framework
+- **TypeScript**: Compile to vanilla JavaScript
+- **No additional libraries**: Pure vanilla approach
+
+## Emoji Assets
+- **Wall**: 🚧 (construction barrier)
+- **Labour (playing)**: 👨🏻‍🔧 (mechanic before helmet)
+- **Labour (won)**: 👷🏻‍♂️ (construction worker with helmet)
+- **Helmet (goal)**: 🪖 (military helmet at fixed bottom right)
+
+## File Structure
+```
+/src
+  index.html          # Game container with timer UI
+  styles.css          # Minimal styling
+  game.ts            # Main game logic with timer
+  labour.ts          # Player character
+  maze.ts            # Complex maze with BFS evaluation and 1x1 paths
+  timer.ts           # 30-second countdown system
+/dist
+  bundle.js          # Compiled output
+```
+
+## Implementation Steps
+
+### 1. HTML Structure (index.html)
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>No Helmet Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+    <div id="timer">Time: 30s</div>
+    <canvas id="game-canvas"></canvas>
+    <div id="ui">
+      <div id="status">Press WASD to start! Find the helmet in 30 seconds!</div>
+      <button id="retry-btn" style="display:none;">Try Again</button>
+    </div>
+  </div>
+  <script src="bundle.js"></script>
+</body>
+</html>
+```
+
+### 2. CSS Styling (styles.css)
+```css
+body { margin: 0; background: #222; color: white; font-family: monospace; }
+#game-container { display: flex; flex-direction: column; align-items: center; padding: 20px; }
+#timer { font-size: 24px; color: #FFD700; margin-bottom: 10px; }
+#game-canvas { border: 2px solid #fff; background: #000; }
+#ui { margin-top: 10px; text-align: center; }
+#retry-btn { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+```
+
+### 3. BFS Complexity Evaluation System
+
+**Enhanced Maze Class**
+- Single-width path network generation (1x1 corridors only)
+- Extensive fake path addition (25-35 misleading branches)
+- Fixed helmet placement at bottom right (size-2, size-2)
+- BFS complexity analysis for min/max path distances
+- Path width enforcement to prevent wide corridors
+
+**BFS Complexity Analysis**
+- Calculate shortest path distance from start to helmet
+- Calculate longest possible path distance in maze
+- Evaluate difference between min/max distances
+- Ensure complexity threshold is met for optimal difficulty
+
+**1x1 Path Width Control**
+- Enforce single-cell width for all walkable paths
+- Prevent wide corridors that make navigation too easy
+- Ensure precise navigation through narrow passages
+- Validate path width during generation
+
+### 4. Core Classes (TypeScript)
+
+**Timer Class**
+- 30-second countdown
+- Start on first WASD press
+- Update display every second
+- Trigger game over when expired
+
+**Labour Class**
+- Position tracking
+- Emoji rendering (👨🏻‍🔧 / 👷🏻‍♂️)
+- Movement validation
+- Fixed helmet touch detection at bottom right
+
+**Maze Class**
+- Complex grid generation with BFS evaluation
+- Fixed helmet placement at bottom right corner
+- Single-width path enforcement (1x1 corridors)
+- BFS complexity analysis and validation
+- Emoji-based rendering (🚧 for walls, 🪖 for helmet)
+
+**Game Class**
+- Odyc.js integration
+- Game state management (waiting/playing/won/lost)
+- Timer integration
+- Retry functionality with new BFS-evaluated maze
+
+### 5. Enhanced Maze Generation Algorithm
+```typescript
+1. Generate single-width path network (1x1 corridors only)
+2. Add 25-35 extensive fake paths of varying lengths (2-12 cells)
+3. Place helmet at fixed bottom right position (size-2, size-2)
+4. Evaluate BFS complexity (min/max path distances)
+5. Validate complexity threshold is met
+6. Ensure single-cell path width throughout maze
+7. Verify helmet accessibility via pathfinding
+```
+
+### 6. BFS Complexity Evaluation System
+- **Min Distance Calculation**: BFS shortest path from start to helmet
+- **Max Distance Analysis**: Longest possible path in maze network
+- **Complexity Difference**: Calculate min/max distance difference
+- **Threshold Validation**: Ensure complexity meets difficulty requirements
+- **Regeneration Logic**: Regenerate maze if complexity insufficient
+
+### 7. Path Width Enforcement
+- **Single Cell Validation**: Check all paths are exactly 1x1 unit
+- **Width Control**: Prevent corridor widening during generation
+- **Narrow Passage**: Force navigation through single-cell paths
+- **Precision Navigation**: Ensure challenging movement requirements
+
+### 8. Fixed Helmet System
+- **Bottom Right Placement**: Helmet always at (size-2, size-2)
+- **Consistent Goal**: Players know destination but face complex navigation
+- **Accessibility Guarantee**: BFS validation ensures reachability
+- **Predictable Target**: Remove randomness, focus on maze complexity
+
+### 9. Emoji Rendering System
+- Canvas text rendering for emojis
+- Consistent sizing and positioning
+- No external asset loading required
+- Cross-platform emoji support
+
+### 10. Timer Implementation
+- Countdown from 30 seconds
+- Starts on first movement
+- Real-time display updates
+- Game over on expiration
+
+### 11. Game States
+- **Waiting**: Show instructions, timer not started
+- **Playing**: Timer active, accept input
+- **Won**: Show victory with 👷🏻‍♂️ emoji
+- **Lost**: Show "No Helmet" message with retry button
+
+### 12. Vanilla JavaScript Features
+- Canvas 2D context for emoji rendering
+- setInterval for timer updates
+- Event listeners for WASD input
+- Button click handler for retry
+- Simple state management
+
+## Minimal Feature Set
+- 30x30 grid maze with single-width paths (1x1 corridors)
+- BFS complexity evaluation for optimal difficulty
+- Fixed helmet at bottom right corner
+- Extensive fake paths (25-35 dead ends) with complexity validation
+- Emoji-based visual elements
+- 30-second timer countdown
+- WASD movement controls
+- Win/lose conditions with retry functionality
+
+## Build Process
+1. Compile TypeScript to JavaScript
+2. Bundle with Odyc.js
+3. Serve index.html
+4. No external assets needed (emojis only)
+
+## Quality Assurance
+- Every maze guarantees helmet accessibility at fixed bottom right
+- BFS complexity evaluation ensures optimal difficulty
+- Single-width paths (1x1) provide precise navigation challenge
+- 25-35 fake paths with measured complexity difference
+- Balanced difficulty: extremely challenging but always solvable within 30 seconds
