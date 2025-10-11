@@ -20,10 +20,11 @@ A maze game where the Labour character must navigate through a maze with mislead
 
 ## Game Mechanics
 
-- **Maze Generation**: Uses recursive backtracking for the main solution path
-- **Fake Paths**: Adds multiple dead-end branches to mislead players
+- **Maze Generation**: Recursive backtracking with BFS complexity evaluation
+- **Extensive Fake Paths**: 25-35 dead-end branches for maximum confusion
+- **Single-Width Corridors**: All paths are exactly 1x1 unit wide
+- **Fixed Helmet Position**: Always located at bottom right corner
 - **Collision Detection**: Prevents movement through walls
-- **Asset Loading**: Graceful fallback to colored shapes if sprites fail to load
 
 ## Controls
 
@@ -35,6 +36,6 @@ A maze game where the Labour character must navigate through a maze with mislead
 ## Technical Details
 
 - **Language**: TypeScript compiled to vanilla JavaScript
-- **Rendering**: HTML5 Canvas with pixel-perfect sprite rendering
+- **Rendering**: HTML5 Canvas with emoji-based graphics
 - **Dependencies**: Minimal - only TypeScript for development
-- **Browser Support**: Modern browsers with Canvas API support
+- **Browser Support**: Modern browsers with Canvas API and emoji support
