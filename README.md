@@ -6,30 +6,17 @@ A maze game where the Labour character must navigate through a maze with mislead
 
 ## Features
 
-- **Misleading Maze**: Random maze generation with 8-12 fake dead-end paths to challenge players
-- **Asset Support**: Sprite-based rendering with fallback to colored rectangles
+- **Complex Maze**: BFS-evaluated maze generation with 25-35 fake dead-end paths
+- **Emoji Graphics**: Uses 🚧 walls, 👨🏻🔧 labour character, and 🪖 helmet
+- **30-Second Timer**: Race against time to find the helmet
 - **WASD Controls**: Move Labour character up (W), down (S), left (A), right (D)
-- **Victory Condition**: Reach the helmet to win the game
+- **Victory Condition**: Reach the helmet at bottom right before time expires
 
 ## Setup
 
-1. **Download Assets** from https://itch.io/game-assets/tag-2d:
-   - `wall.png` - Stone/brick wall texture (16x16 or 32x32 pixels)
-   - `labour.png` - Worker/miner character sprite
-   - `helmet.png` - Golden helmet icon
-
-2. **Place Assets** in `/assets/sprites/` directory:
-   ```
-   assets/
-   └── sprites/
-       ├── wall.png
-       ├── labour.png
-       └── helmet.png
-   ```
-
-3. **Run the Game**:
-   - Open `src/index.html` in a web browser
-   - Assets will load automatically with fallback rendering if missing
+**Run the Game**:
+- Open `src/index.html` in a web browser
+- Game uses emoji graphics (no external assets required)
 
 ## Game Mechanics
 
