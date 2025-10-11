@@ -1,5 +1,7 @@
 # No Helmet Game
 
+*Project vibe coded by Amazon Q and Specify (Spec Kit by GitHub)*
+
 A maze game where the Labour character must navigate through a maze with misleading fake paths to find the helmet and win.
 
 ## Features
