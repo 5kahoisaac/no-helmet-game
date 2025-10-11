@@ -1,0 +1,21 @@
+# IDE and Editor
+.specify
+.amazonq/
+.idea/
+.vscode/
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.js
+*.js.map
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
