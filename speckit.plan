@@ -2,29 +2,43 @@
 
 ## Bug Fixes Required
 
-### Timer Display Bug - Critical Fix Needed
-- **Issue**: Victory message shows "You found the helmet in 0.0s!" instead of actual completion time
-- **Root Cause**: `getElapsedTime()` method returns 0 when timer is stopped
-- **Fix Required**: Store elapsed time before stopping timer in victory condition
-- **Implementation**: Modify `checkHelmetTouch()` to calculate elapsed time before timer.stop()
+### Timer Display Rendering Bug - Critical Fix Needed
+- **Issue**: Top timer display doesn't update unless user presses WASD keys
+- **Root Cause**: Timer display only updates in `render()` method which is only called on input
+- **Timer Logic**: Works correctly (countdown, expiration, warnings) - only display issue
+- **Fix Required**: Add timer display update to Timer.update() method or separate interval
+- **Implementation**: Move timer display update from render() to timer update cycle
 
-### Timer Class Fix
+### Timer Display Fix
 ```typescript
-getElapsedTime(): number {
-  if (this.startTime === 0) return 0;
-  return this.active ? (Date.now() - this.startTime) / 1000 : this.duration - this.remaining;
+update(): void {
+  if (!this.active) return;
+  
+  const elapsed = (Date.now() - this.startTime) / 1000;
+  this.remaining = Math.max(0, this.duration - elapsed);
+  
+  // Update display immediately in timer update cycle
+  const timerEl = document.getElementById('timer')!;
+  timerEl.textContent = `Time: ${Math.ceil(this.remaining)}s`;
+  
+  if (this.remaining <= 0) {
+    this.stop();
+    this.onExpired();
+  } else if (this.remaining <= 10 && this.remaining > 9.9) {
+    this.onWarning(10);
+  } else if (this.remaining <= 5 && this.remaining > 4.9) {
+    this.onWarning(5);
+  } else if (this.remaining <= 3 && this.remaining > 2.9) {
+    this.onWarning(3);
+  }
 }
 ```
 
-### Game Class Victory Fix
+### Game Render Method Fix
 ```typescript
-if (this.checkHelmetTouch()) {
-  this.gameState = 'won';
-  this.stats.completionTime = this.timer.getElapsedTime(); // Store BEFORE stopping
-  this.timer.stop();
-  this.calculateScore();
-  this.showResult();
-  this.blockInput();
+render(): void {
+  // Remove timer display update from here since it's now in Timer.update()
+  // Keep only canvas rendering logic
 }
 ```
 

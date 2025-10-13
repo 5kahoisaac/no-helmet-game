@@ -39,6 +39,10 @@ class Timer {
     const elapsed = (Date.now() - this.startTime) / 1000;
     this.remaining = Math.max(0, this.duration - elapsed);
     
+    // Update timer display immediately in timer update cycle
+    const timerEl = document.getElementById('timer')!;
+    timerEl.textContent = `Time: ${Math.ceil(this.remaining)}s`;
+    
     if (this.remaining <= 0) {
       this.stop();
       this.onExpired();
@@ -494,10 +498,6 @@ class Game {
     const labourY = this.labour.position.y * this.cellSize;
     const labourEmoji = this.gameState === 'won' ? '👷🏻‍♂️' : '👨🏻‍🔧';
     this.ctx.fillText(labourEmoji, labourX + this.cellSize / 2, labourY + this.cellSize / 2);
-    
-    // Update timer display
-    const timerEl = document.getElementById('timer')!;
-    timerEl.textContent = `Time: ${Math.ceil(this.timer.remaining)}s`;
   }
 }
 
