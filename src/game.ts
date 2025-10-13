@@ -829,16 +829,14 @@ class Game {
     showRetryButton(): void {
         const retryBtn = document.getElementById('retry-btn');
         if (retryBtn) {
-            retryBtn.style.opacity = "1";
-            retryBtn.style.pointerEvents = 'auto';
+            retryBtn.style.display = "block";
         }
     }
 
     hideRetryButton(): void {
         const retryBtn = document.getElementById('retry-btn');
         if (retryBtn) {
-            retryBtn.style.opacity = "0";
-            retryBtn.style.pointerEvents = 'none';
+            retryBtn.style.display = 'none';
         }
     }
 
