@@ -1,10 +1,40 @@
 # Implementation Tasks
 
 ## Setup Tasks
-- [ ] Install Odyc.js and TypeScript
-- [ ] Create project structure (src/, dist/)
+- [ ] Install TypeScript for development
+- [ ] Create project structure (src/)
 - [ ] Setup TypeScript configuration
-- [ ] Create HTML template with timer and retry UI
+- [ ] Create HTML template with NES.css integration and retro UI
+- [ ] Verify package.json has "clear" script for removing bundled JS files
+
+## Single File Architecture
+- [ ] Consolidate all classes into single game.ts file
+- [ ] Remove individual TypeScript files (timer.ts, labour.ts, maze.ts)
+- [ ] Ensure no import/export statements in single file
+- [ ] Test single file compiles without module dependencies
+- [ ] Verify all classes are accessible within single file scope
+
+## Development Workflow
+- [ ] Run "npm run clear" before editing source files
+- [ ] Edit single TypeScript file (game.ts) only
+- [ ] Avoid editing compiled JavaScript files directly
+- [ ] Follow Clear → Edit TS → Compile → Bundle → Deploy pipeline
+- [ ] Test workflow maintains clean development environment
+
+## ES6 Import Resolution
+- [ ] Create bundled game.js file with all classes
+- [ ] Remove ES6 import/export statements from bundled file
+- [ ] Ensure vanilla JavaScript compatibility
+- [ ] Test script loading without module type
+- [ ] Verify no "Cannot use import statement outside a module" errors
+
+## NES.css Integration
+- [ ] Add NES.css CDN link to HTML
+- [ ] Include "Press Start 2P" font from Google Fonts
+- [ ] Implement nes-container with-title for game layout
+- [ ] Style timer with nes-text is-warning
+- [ ] Style status messages with nes-text is-primary
+- [ ] Style retry button with nes-btn is-success
 
 ## Timer System
 - [ ] Implement Timer class with 30-second countdown
@@ -27,11 +57,13 @@
 - [ ] Add multiple branching directions with sub-branches
 - [ ] Ensure misleading routes with false hope patterns
 
-## Fixed Helmet Placement System
+## Fixed Helmet Placement System with Wall Constraint
 - [ ] Implement fixed helmet placement at bottom right (size-2, size-2)
+- [ ] Ensure no walls appear at helmet position during maze generation
+- [ ] Add wall constraint validation for helmet cell
 - [ ] Remove random helmet location logic
 - [ ] Ensure helmet position is always at consistent location
-- [ ] Validate helmet placement in open path at bottom right
+- [ ] Validate helmet placement in guaranteed open path at bottom right
 - [ ] Guarantee helmet accessibility from start to fixed position
 
 ## BFS Complexity Evaluation System
@@ -41,18 +73,24 @@
 - [ ] Add complexity threshold validation
 - [ ] Implement maze regeneration if complexity insufficient
 
-## Enhanced Accessibility Validation System
+## Enhanced Accessibility Validation System with Wall Constraint
 - [ ] Implement BFS pathfinding algorithm for fixed helmet location
 - [ ] Create helmet accessibility validation function for bottom right position
+- [ ] Add wall constraint check - ensure no walls at helmet position
 - [ ] Add maze regeneration logic if helmet unreachable at fixed location
 - [ ] Ensure helmet placement validation at consistent position
 - [ ] Validate every maze before game start with fixed helmet
+- [ ] Verify wall constraint is enforced during maze generation
 
 ## Core Development
-- [ ] Build Labour class with emoji rendering and fixed helmet touch detection
-- [ ] Develop Game class with state management (waiting/playing/won/lost)
+- [ ] Run "npm run clear" before starting development
+- [ ] Implement Timer class in single game.ts file
+- [ ] Implement Labour class with emoji rendering and helmet touch detection
+- [ ] Implement Maze class with BFS evaluation and wall constraint
+- [ ] Implement Game class with state management (waiting/playing/won/lost)
 - [ ] Add WASD input handling with timer activation
 - [ ] Implement collision detection and movement validation
+- [ ] Ensure all classes work together in single file scope
 
 ## Emoji Rendering System
 - [ ] Setup canvas text rendering for emojis
@@ -82,33 +120,51 @@
 - [ ] Test path width enforcement during generation
 - [ ] Validate precise navigation requirements
 
-## Enhanced Quality Assurance
+## Enhanced Quality Assurance with Wall Constraint
 - [ ] Test maze complexity with BFS evaluation (25-35 fake paths)
 - [ ] Verify helmet accessibility at fixed bottom right position
+- [ ] Ensure no walls appear at helmet position in any generated maze
 - [ ] Ensure maze regeneration works with BFS complexity validation
-- [ ] Test that walls never block helmet at bottom right
+- [ ] Test that wall constraint is properly enforced
 - [ ] Validate solution path always exists to fixed helmet location
 - [ ] Test BFS complexity provides appropriate 30-second challenge
 
-## Fixed Location Validation
+## Fixed Location Validation with Wall Constraint
 - [ ] Test helmet placement always at bottom right (size-2, size-2)
+- [ ] Verify no walls can appear at helmet position
 - [ ] Verify accessibility validation works for fixed location
 - [ ] Ensure consistent helmet position across all games
 - [ ] Test pathfinding accuracy to fixed helmet position
 - [ ] Validate retry maintains fixed helmet location
+- [ ] Test wall constraint enforcement across maze regenerations
 
-## UI Implementation
-- [ ] Timer countdown display
-- [ ] Status message updates
-- [ ] "No Helmet" message on timeout
-- [ ] Retry button functionality
+## UI Implementation with NES.css
+- [ ] Timer countdown display with retro styling
+- [ ] Status message updates using nes-text classes
+- [ ] "No Helmet" message on timeout with retro aesthetics
+- [ ] Retry button functionality with nes-btn styling
 - [ ] Game restart with new BFS-evaluated maze and fixed helmet location
+- [ ] Responsive container layout for different screen sizes
+
+## File Cleanup
+- [ ] Remove individual TypeScript files after consolidation (timer.ts, labour.ts, maze.ts)
+- [ ] Keep only game.ts and index.html in src/ directory
+- [ ] Remove compiled individual JS files if they exist
+- [ ] Verify clean file structure matches plan specification
+- [ ] Test that removed files don't break build process
 
 ## Polish
-- [ ] Add CSS styling for timer and UI elements
+- [ ] Run "npm run clear" before final testing
+- [ ] Test single file architecture compiles correctly
+- [ ] Test NES.css styling renders correctly across browsers
+- [ ] Verify retro font loads properly
 - [ ] Test all movement directions work correctly
 - [ ] Verify timer starts only on first move
 - [ ] Ensure retry generates new BFS-validated maze with fixed helmet
 - [ ] Test single-width paths provide appropriate navigation challenge
 - [ ] Verify BFS complexity evaluation creates optimal difficulty
-- [ ] Build and bundle for deployment
+- [ ] Test wall constraint prevents walls at helmet position
+- [ ] Test bundled JavaScript loads without ES6 import errors
+- [ ] Verify cross-browser compatibility with vanilla JavaScript
+- [ ] Confirm clean file structure (only game.ts and index.html)
+- [ ] Build and bundle for deployment with NES.css integration

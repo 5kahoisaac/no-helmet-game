@@ -35,7 +35,7 @@ A 2D maze navigation game with a 30-second time limit where the player controls 
 - **Helmet Location**: Fixed at bottom right corner (size-2, size-2)
 - **Complexity Evaluation**: BFS analysis to ensure optimal min/max path difference
 - **Accessibility**: Helmet position is always reachable from start via pathfinding validation
-- **Wall Constraint**: Walls must not block helmet - helmet placed in open path
+- **Wall Constraint**: Walls must not appear at the helmet position - helmet must be placed in open path
 - **Collision**: Labour cannot move through walls
 
 ### Win/Lose Conditions
@@ -101,7 +101,7 @@ class Game {
 - **Fixed Helmet Placement**: Helmet always at bottom right corner (size-2, size-2)
 - **BFS Complexity Evaluation**: Analyze min/max path distances to optimize difficulty
 - **Accessibility Validation**: Verify helmet position is reachable via pathfinding
-- **Wall Placement**: Ensure helmet is placed in open path, never blocked by walls
+- **Wall Placement**: Ensure helmet is placed in open path, walls must not appear at helmet position
 - **Complexity Metrics**: Use BFS distance difference to measure maze difficulty
 
 ### Input System
@@ -144,13 +144,13 @@ class Game {
 13. Show result message and retry button
 14. Allow restart with new complex maze and BFS complexity evaluation
 
-## Visual Elements
+- **Visual Elements**
 - **Labour**: Distinct character sprite/icon
-- **Walls**: Solid barriers that never block helmet
+- **Walls**: Solid barriers that must not appear at helmet position
 - **Paths**: Clear walkable areas (both correct and fake)
 - **Complex Dead Ends**: Multiple misleading paths of varying lengths
 - **Start**: Green marker or distinct starting area
-- **Helmet**: Goal object at accessible finish position
+- **Helmet**: Goal object at accessible finish position with no walls
 - **Timer**: Countdown display (30, 29, 28...)
 - **Victory**: Helmet earned message
 - **Defeat**: "No Helmet" message

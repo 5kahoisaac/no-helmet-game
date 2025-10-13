@@ -5,7 +5,8 @@
   "main": "src/index.html",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "clear": "find ./src -name '*.js' -delete"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

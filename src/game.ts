@@ -1,392 +1,453 @@
+// Position interface
 interface Position {
-  x: number;
-  y: number;
+    x: number;
+    y: number;
 }
 
-type GameState = 'waiting' | 'playing' | 'won' | 'lost';
-
-interface BFSComplexity {
-  minDistance: number;
-  maxDistance: number;
-  difference: number;
-}
-
+// Timer Class
 class Timer {
-  duration: number = 30;
-  remaining: number = 30;
-  active: boolean = false;
-  intervalId: any = null;
+    duration: number = 30;
+    remaining: number = 30;
+    active: boolean = false;
+    private intervalId: any = null;
 
-  start() {
-    this.active = true;
-    this.remaining = this.duration;
-    this.intervalId = setInterval(() => {
-      this.remaining--;
-      this.updateDisplay();
-      if (this.remaining <= 0) {
-        this.stop();
-      }
-    }, 1000);
-    this.updateDisplay();
-  }
-
-  stop() {
-    this.active = false;
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
-  }
-
-  reset() {
-    this.stop();
-    this.remaining = this.duration;
-    this.updateDisplay();
-  }
-
-  isExpired(): boolean {
-    return this.remaining <= 0;
-  }
-
-  updateDisplay() {
-    document.getElementById('timer')!.textContent = `Time: ${this.remaining}s`;
-  }
-}
-
-class Maze {
-  grid: number[][] = [];
-  size: number = 31; // Odd size for proper maze generation
-  cellSize: number = 19;
-  start: Position = { x: 1, y: 1 };
-  helmetPosition: Position = { x: 29, y: 29 }; // Fixed bottom right
-
-  constructor() {
-    this.generateValidMaze();
-  }
-
-  generateValidMaze() {
-    let attempts = 0;
-    let complexity: BFSComplexity;
-    
-    do {
-      this.generate();
-      complexity = this.evaluateBFSComplexity();
-      attempts++;
-    } while (complexity.difference < 15 && attempts < 30); // Minimum complexity threshold
-  }
-
-  generate() {
-    // Initialize with walls
-    this.grid = Array(this.size).fill(0).map(() => Array(this.size).fill(1));
-    
-    // Create single-width path network
-    this.carvePassage(1, 1);
-    
-    // Add extensive fake paths (25-35 branches)
-    this.addExtensiveFakePaths();
-    
-    // Ensure start and helmet positions are clear
-    this.grid[this.start.y][this.start.x] = 0;
-    this.grid[this.helmetPosition.y][this.helmetPosition.x] = 0;
-    
-    // Ensure single-width paths throughout
-    this.ensureSingleWidthPaths();
-  }
-
-  carvePassage(x: number, y: number) {
-    this.grid[y][x] = 0;
-    const directions = [[0, 2], [2, 0], [0, -2], [-2, 0]].sort(() => Math.random() - 0.5);
-    
-    for (const [dx, dy] of directions) {
-      const nx = x + dx, ny = y + dy;
-      if (nx > 0 && nx < this.size - 1 && ny > 0 && ny < this.size - 1 && this.grid[ny][nx] === 1) {
-        this.grid[y + dy / 2][x + dx / 2] = 0; // Single-width corridor
-        this.carvePassage(nx, ny);
-      }
-    }
-  }
-
-  addExtensiveFakePaths() {
-    // Add 25-35 extensive fake dead-end branches
-    const fakePathCount = 25 + Math.floor(Math.random() * 11);
-    
-    for (let i = 0; i < fakePathCount; i++) {
-      for (let attempts = 0; attempts < 200; attempts++) {
-        const x = 2 + Math.floor(Math.random() * (this.size - 4));
-        const y = 2 + Math.floor(Math.random() * (this.size - 4));
-        
-        if (this.grid[y][x] === 1 && this.hasAdjacentPath(x, y)) {
-          // Variable length fake paths (2-12 cells deep) with single width
-          const fakeLength = 2 + Math.floor(Math.random() * 11);
-          this.carveFakePath(x, y, fakeLength);
-          break;
-        }
-      }
-    }
-  }
-
-  hasAdjacentPath(x: number, y: number): boolean {
-    const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-    return directions.some(([dx, dy]) => {
-      const nx = x + dx, ny = y + dy;
-      return nx >= 0 && nx < this.size && ny >= 0 && ny < this.size && this.grid[ny][nx] === 0;
-    });
-  }
-
-  carveFakePath(x: number, y: number, length: number) {
-    this.grid[y][x] = 0;
-    if (length <= 0) return;
-    
-    // Single direction to maintain 1x1 width
-    const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]].sort(() => Math.random() - 0.5);
-    
-    for (const [dx, dy] of directions) {
-      const nx = x + dx, ny = y + dy;
-      if (nx > 0 && nx < this.size - 1 && ny > 0 && ny < this.size - 1 && this.grid[ny][nx] === 1) {
-        this.carveFakePath(nx, ny, length - 1);
-        break; // Only one direction to maintain single width
-      }
-    }
-  }
-
-  ensureSingleWidthPaths() {
-    // Validate and fix any paths wider than 1x1
-    for (let y = 1; y < this.size - 1; y++) {
-      for (let x = 1; x < this.size - 1; x++) {
-        if (this.grid[y][x] === 0) {
-          // Check for 2x2 open areas and block one cell to maintain single width
-          if (this.grid[y][x + 1] === 0 && this.grid[y + 1][x] === 0 && this.grid[y + 1][x + 1] === 0) {
-            // Block one corner to prevent wide areas
-            if (Math.random() < 0.5) {
-              this.grid[y + 1][x + 1] = 1;
-            } else {
-              this.grid[y][x + 1] = 1;
+    start(): void {
+        if (this.active) return;
+        this.active = true;
+        this.intervalId = setInterval(() => {
+            this.remaining--;
+            this.updateDisplay();
+            if (this.remaining <= 0) {
+                this.stop();
             }
-          }
-        }
-      }
+        }, 1000);
     }
-  }
 
-  evaluateBFSComplexity(): BFSComplexity {
-    // Calculate shortest path distance (min)
-    const minDistance = this.bfsDistance(this.start, this.helmetPosition);
-    
-    // Calculate longest path distance in maze (max)
-    let maxDistance = 0;
-    for (let y = 1; y < this.size - 1; y++) {
-      for (let x = 1; x < this.size - 1; x++) {
-        if (this.grid[y][x] === 0) {
-          const distance = this.bfsDistance(this.start, { x, y });
-          if (distance > maxDistance) {
-            maxDistance = distance;
-          }
+    stop(): void {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
         }
-      }
+        this.active = false;
     }
-    
-    return {
-      minDistance,
-      maxDistance,
-      difference: maxDistance - minDistance
-    };
-  }
 
-  bfsDistance(start: Position, target: Position): number {
-    const queue: { pos: Position; distance: number }[] = [{ pos: start, distance: 0 }];
-    const visited = new Set<string>();
-    visited.add(`${start.x},${start.y}`);
+    reset(): void {
+        this.stop();
+        this.remaining = this.duration;
+        this.updateDisplay();
+    }
 
-    while (queue.length > 0) {
-      const { pos, distance } = queue.shift()!;
-      
-      if (pos.x === target.x && pos.y === target.y) {
-        return distance;
-      }
+    isExpired(): boolean {
+        return this.remaining <= 0;
+    }
 
-      const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-      for (const [dx, dy] of directions) {
-        const nx = pos.x + dx;
-        const ny = pos.y + dy;
-        const key = `${nx},${ny}`;
-
-        if (nx >= 0 && nx < this.size && ny >= 0 && ny < this.size && 
-            !this.grid[ny][nx] && !visited.has(key)) {
-          visited.add(key);
-          queue.push({ pos: { x: nx, y: ny }, distance: distance + 1 });
+    private updateDisplay(): void {
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            timerElement.textContent = `Time: ${this.remaining}s`;
         }
-      }
     }
-    
-    return -1; // Target not reachable
-  }
-
-  validateHelmetAccessibility(): boolean {
-    return this.bfsDistance(this.start, this.helmetPosition) !== -1;
-  }
-
-  isWall(x: number, y: number): boolean {
-    return this.grid[y]?.[x] === 1;
-  }
-
-  isPath(x: number, y: number): boolean {
-    return this.grid[y]?.[x] === 0;
-  }
 }
 
+// Labour Class
 class Labour {
-  position: Position = { x: 1, y: 1 };
+    position: Position;
 
-  move(direction: string, maze: Maze): boolean {
-    const newPos = { ...this.position };
-    
-    switch (direction) {
-      case 'w': newPos.y--; break;
-      case 's': newPos.y++; break;
-      case 'a': newPos.x--; break;
-      case 'd': newPos.x++; break;
+    constructor(startX: number, startY: number) {
+        this.position = {x: startX, y: startY};
     }
 
-    if (!maze.isWall(newPos.x, newPos.y)) {
-      this.position = newPos;
-      return true;
+    move(direction: 'up' | 'down' | 'left' | 'right'): void {
+        switch (direction) {
+            case 'up':
+                this.position.y--;
+                break;
+            case 'down':
+                this.position.y++;
+                break;
+            case 'left':
+                this.position.x--;
+                break;
+            case 'right':
+                this.position.x++;
+                break;
+        }
     }
-    return false;
-  }
 
-  isAtPosition(pos: Position): boolean {
-    return this.position.x === pos.x && this.position.y === pos.y;
-  }
+    isAtPosition(pos: Position): boolean {
+        return this.position.x === pos.x && this.position.y === pos.y;
+    }
 
-  reset() {
-    this.position = { x: 1, y: 1 };
-  }
+    reset(startX: number, startY: number): void {
+        this.position = {x: startX, y: startY};
+    }
 }
 
+// Maze Class
+class Maze {
+    grid: number[][];
+    size: number;
+    startPosition: Position;
+    helmetPosition: Position;
+
+    constructor(size: number = 30) {
+        this.size = size;
+        this.grid = [];
+        this.startPosition = {x: 1, y: 1};
+        this.helmetPosition = {x: size - 2, y: size - 2};
+    }
+
+    generate(): void {
+        this.grid = Array(this.size).fill(null).map(() => Array(this.size).fill(1));
+        this.generateBasePaths();
+        // Wall constraint: Ensure helmet position never has walls
+        this.grid[this.helmetPosition.y][this.helmetPosition.x] = 0;
+        this.addFakePaths();
+        // Remove infinite recursion - validate once only
+        if (!this.validateHelmetAccessibility()) {
+            // If not accessible, ensure path to helmet exists
+            this.createDirectPath();
+        }
+    }
+
+    validateHelmetAccessibility(): boolean {
+        const visited = Array(this.size).fill(null).map(() => Array(this.size).fill(false));
+        const queue: Position[] = [{...this.startPosition}];
+        visited[this.startPosition.y][this.startPosition.x] = true;
+
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+
+            if (current.x === this.helmetPosition.x && current.y === this.helmetPosition.y) {
+                return true;
+            }
+
+            const directions = [
+                {dx: 0, dy: -1}, {dx: 0, dy: 1},
+                {dx: -1, dy: 0}, {dx: 1, dy: 0}
+            ];
+
+            directions.forEach(dir => {
+                const nx = current.x + dir.dx;
+                const ny = current.y + dir.dy;
+
+                if (this.isValidMove({x: nx, y: ny}) && !visited[ny][nx]) {
+                    visited[ny][nx] = true;
+                    queue.push({x: nx, y: ny});
+                }
+            });
+        }
+
+        return false;
+    }
+
+    isValidMove(position: Position): boolean {
+        return position.x >= 0 && position.x < this.size &&
+            position.y >= 0 && position.y < this.size &&
+            this.grid[position.y][position.x] === 0;
+    }
+
+    private generateBasePaths(): void {
+        const stack: Position[] = [];
+        const visited = Array(this.size).fill(null).map(() => Array(this.size).fill(false));
+
+        this.grid[this.startPosition.y][this.startPosition.x] = 0;
+        visited[this.startPosition.y][this.startPosition.x] = true;
+        stack.push({...this.startPosition});
+
+        while (stack.length > 0) {
+            const current = stack[stack.length - 1];
+            const neighbors = this.getUnvisitedNeighbors(current, visited);
+
+            if (neighbors.length > 0) {
+                const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                this.grid[next.y][next.x] = 0;
+                visited[next.y][next.x] = true;
+                stack.push(next);
+            } else {
+                stack.pop();
+            }
+        }
+    }
+
+    private addFakePaths(): void {
+        const fakePathCount = 25 + Math.floor(Math.random() * 11);
+        for (let i = 0; i < fakePathCount; i++) {
+            this.createFakePath();
+        }
+    }
+
+    private createFakePath(): void {
+        for (let attempts = 0; attempts < 100; attempts++) {
+            const x = 1 + Math.floor(Math.random() * (this.size - 2));
+            const y = 1 + Math.floor(Math.random() * (this.size - 2));
+
+            if (this.grid[y][x] === 1 && this.hasAdjacentPath(x, y)) {
+                const length = 2 + Math.floor(Math.random() * 11);
+                this.extendFakePath(x, y, length);
+                break;
+            }
+        }
+    }
+
+    private extendFakePath(startX: number, startY: number, maxLength: number): void {
+        let x = startX, y = startY;
+        let length = 0;
+
+        while (length < maxLength && this.isValidCell(x, y) && this.grid[y][x] === 1) {
+            // Wall constraint: Don't override helmet position
+            if (x === this.helmetPosition.x && y === this.helmetPosition.y) break;
+
+            this.grid[y][x] = 0;
+            length++;
+
+            const directions = [
+                {dx: 0, dy: -1}, {dx: 0, dy: 1},
+                {dx: -1, dy: 0}, {dx: 1, dy: 0}
+            ];
+            const dir = directions[Math.floor(Math.random() * directions.length)];
+            x += dir.dx;
+            y += dir.dy;
+        }
+    }
+
+    private hasAdjacentPath(x: number, y: number): boolean {
+        const directions = [
+            {dx: 0, dy: -1}, {dx: 0, dy: 1},
+            {dx: -1, dy: 0}, {dx: 1, dy: 0}
+        ];
+
+        return directions.some(dir => {
+            const nx = x + dir.dx;
+            const ny = y + dir.dy;
+            return this.isValidCell(nx, ny) && this.grid[ny][nx] === 0;
+        });
+    }
+
+    private getUnvisitedNeighbors(pos: Position, visited: boolean[][]): Position[] {
+        const neighbors: Position[] = [];
+        const directions = [
+            {dx: 0, dy: -2}, {dx: 0, dy: 2},
+            {dx: -2, dy: 0}, {dx: 2, dy: 0}
+        ];
+
+        directions.forEach(dir => {
+            const nx = pos.x + dir.dx;
+            const ny = pos.y + dir.dy;
+
+            if (this.isValidCell(nx, ny) && !visited[ny][nx]) {
+                neighbors.push({x: nx, y: ny});
+            }
+        });
+
+        return neighbors;
+    }
+
+    private isValidCell(x: number, y: number): boolean {
+        return x >= 1 && x < this.size - 1 && y >= 1 && y < this.size - 1;
+    }
+
+    private createDirectPath(): void {
+        // Create direct path from start to helmet if not accessible
+        let x = this.startPosition.x;
+        let y = this.startPosition.y;
+
+        // Move right to helmet x position
+        while (x < this.helmetPosition.x) {
+            this.grid[y][x] = 0;
+            x++;
+        }
+
+        // Move down to helmet y position
+        while (y < this.helmetPosition.y) {
+            this.grid[y][x] = 0;
+            y++;
+        }
+
+        // Ensure helmet position is open
+        this.grid[this.helmetPosition.y][this.helmetPosition.x] = 0;
+    }
+}
+
+// Game Class
 class Game {
-  canvas: HTMLCanvasElement;
-  ctx: CanvasRenderingContext2D;
-  maze: Maze;
-  labour: Labour;
-  timer: Timer;
-  gameState: GameState = 'waiting';
+    labour: Labour;
+    maze: Maze;
+    timer: Timer;
+    gameState: 'waiting' | 'playing' | 'won' | 'lost';
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    cellSize: number;
 
-  constructor() {
-    this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
-    this.ctx = this.canvas.getContext('2d')!;
-    this.canvas.width = 600;
-    this.canvas.height = 600;
-    
-    this.maze = new Maze();
-    this.labour = new Labour();
-    this.timer = new Timer();
-    
-    this.setupInput();
-    this.setupRetryButton();
-    this.gameLoop();
-  }
+    constructor() {
+        this.maze = new Maze(30);
+        this.labour = new Labour(1, 1);
+        this.timer = new Timer();
+        this.gameState = 'waiting';
 
-  setupInput() {
-    document.addEventListener('keydown', (e) => {
-      if (this.gameState !== 'waiting' && this.gameState !== 'playing') return;
-      
-      const key = e.key.toLowerCase();
-      if (['w', 'a', 's', 'd'].includes(key)) {
+        this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+        this.ctx = this.canvas.getContext('2d')!;
+        this.cellSize = this.canvas.width / this.maze.size;
+
+        this.setupEventListeners();
+        this.init();
+    }
+
+    init(): void {
+        this.maze.generate();
+        this.labour.reset(1, 1);
+        this.timer.reset();
+        this.gameState = 'waiting';
+        this.updateStatus('Press WASD to start! Find the helmet in 30 seconds!');
+        this.render();
+    }
+
+    setupEventListeners(): void {
+        document.addEventListener('keydown', (e) => this.handleInput(e.key));
+
+        const retryBtn = document.getElementById('retry-btn');
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => this.restart());
+        }
+    }
+
+    handleInput(key: string): void {
+        if (this.gameState !== 'waiting' && this.gameState !== 'playing') return;
+
+        const keyMap: { [key: string]: 'up' | 'down' | 'left' | 'right' } = {
+            'w': 'up', 'W': 'up',
+            's': 'down', 'S': 'down',
+            'a': 'left', 'A': 'left',
+            'd': 'right', 'D': 'right'
+        };
+
+        const direction = keyMap[key];
+        if (!direction) return;
+
         if (this.gameState === 'waiting') {
-          this.startGame();
+            this.gameState = 'playing';
+            this.timer.start();
+            this.updateStatus('Find the helmet before time runs out!');
         }
-        
-        if (this.gameState === 'playing') {
-          this.labour.move(key, this.maze);
-          this.checkHelmetTouch();
+
+        const newPos: Position = {...this.labour.position};
+        switch (direction) {
+            case 'up':
+                newPos.y--;
+                break;
+            case 'down':
+                newPos.y++;
+                break;
+            case 'left':
+                newPos.x--;
+                break;
+            case 'right':
+                newPos.x++;
+                break;
         }
-      }
-    });
-  }
 
-  setupRetryButton() {
-    document.getElementById('retry-btn')!.addEventListener('click', () => {
-      this.restart();
-    });
-  }
-
-  startGame() {
-    this.gameState = 'playing';
-    this.timer.start();
-    document.getElementById('status')!.textContent = 'Find the helmet 🪖 at bottom right before time runs out!';
-  }
-
-  checkHelmetTouch() {
-    if (this.labour.isAtPosition(this.maze.helmetPosition)) {
-      this.gameState = 'won';
-      this.timer.stop();
-      document.getElementById('status')!.textContent = '🎉 You got the Helmet! You won!';
-      this.showRetryButton();
-    }
-  }
-
-  checkTimeExpired() {
-    if (this.timer.isExpired() && this.gameState === 'playing') {
-      this.gameState = 'lost';
-      document.getElementById('status')!.textContent = '⏰ No Helmet! Time\'s up!';
-      this.showRetryButton();
-    }
-  }
-
-  showRetryButton() {
-    document.getElementById('retry-btn')!.style.display = 'block';
-  }
-
-  restart() {
-    this.gameState = 'waiting';
-    this.maze = new Maze(); // Generate new BFS-evaluated maze with fixed helmet
-    this.labour.reset();
-    this.timer.reset();
-    document.getElementById('status')!.textContent = 'Press WASD to start! Find the helmet 🪖 in 30 seconds!';
-    document.getElementById('retry-btn')!.style.display = 'none';
-  }
-
-  render() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
-    // Draw maze
-    for (let y = 0; y < this.maze.size; y++) {
-      for (let x = 0; x < this.maze.size; x++) {
-        const px = x * this.maze.cellSize;
-        const py = y * this.maze.cellSize;
-        
-        if (this.maze.grid[y][x] === 1) {
-          // Draw wall emoji
-          this.ctx.font = `${this.maze.cellSize - 2}px Arial`;
-          this.ctx.textAlign = 'center';
-          this.ctx.fillText('🚧', px + this.maze.cellSize / 2, py + this.maze.cellSize - 2);
-        } else {
-          // Draw path
-          this.ctx.fillStyle = '#111';
-          this.ctx.fillRect(px, py, this.maze.cellSize, this.maze.cellSize);
+        if (this.maze.isValidMove(newPos)) {
+            this.labour.move(direction);
+            this.checkHelmetTouch();
         }
-      }
+
+        this.render();
+        this.checkTimeExpired();
     }
 
-    // Draw helmet at fixed bottom right position
-    const fx = this.maze.helmetPosition.x * this.maze.cellSize;
-    const fy = this.maze.helmetPosition.y * this.maze.cellSize;
-    this.ctx.font = `${this.maze.cellSize - 2}px Arial`;
-    this.ctx.textAlign = 'center';
-    this.ctx.fillText('🪖', fx + this.maze.cellSize / 2, fy + this.maze.cellSize - 2);
+    checkHelmetTouch(): boolean {
+        if (this.labour.isAtPosition(this.maze.helmetPosition)) {
+            this.gameState = 'won';
+            this.timer.stop();
+            this.updateStatus('Helmet earned! You win!');
+            this.showRetryButton();
+            return true;
+        }
+        return false;
+    }
 
-    // Draw labour
-    const lx = this.labour.position.x * this.maze.cellSize;
-    const ly = this.labour.position.y * this.maze.cellSize;
-    const labourEmoji = this.gameState === 'won' ? '👷🏻‍♂️' : '👨🏻‍🔧';
-    this.ctx.fillText(labourEmoji, lx + this.maze.cellSize / 2, ly + this.maze.cellSize - 2);
-  }
+    checkTimeExpired(): boolean {
+        if (this.timer.isExpired() && this.gameState === 'playing') {
+            this.gameState = 'lost';
+            this.updateStatus('No Helmet - Time expired!');
+            this.showRetryButton();
+            return true;
+        }
+        return false;
+    }
 
-  gameLoop() {
-    this.checkTimeExpired();
-    this.render();
-    requestAnimationFrame(() => this.gameLoop());
-  }
+    showRetryButton(): void {
+        const retryBtn = document.getElementById('retry-btn');
+        if (retryBtn) {
+            retryBtn.style.opacity = "1";
+            retryBtn.style.pointerEvents = 'cursor';
+        }
+    }
+
+    hideRetryButton(): void {
+        const retryBtn = document.getElementById('retry-btn');
+        if (retryBtn) {
+            retryBtn.style.opacity = "0";
+            retryBtn.style.pointerEvents = 'none';
+        }
+    }
+
+    restart(): void {
+        this.hideRetryButton();
+        this.init();
+    }
+
+    updateStatus(message: string): void {
+        const statusElement = document.getElementById('status');
+        if (statusElement) {
+            statusElement.textContent = message;
+        }
+    }
+
+    render(): void {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Render maze
+        for (let y = 0; y < this.maze.size; y++) {
+            for (let x = 0; x < this.maze.size; x++) {
+                const cellX = x * this.cellSize;
+                const cellY = y * this.cellSize;
+
+                if (this.maze.grid[y][x] === 1) {
+                    // Wall
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.fillRect(cellX, cellY, this.cellSize, this.cellSize);
+                    this.renderEmoji('🚧', cellX, cellY);
+                } else {
+                    // Path
+                    this.ctx.fillStyle = '#333';
+                    this.ctx.fillRect(cellX, cellY, this.cellSize, this.cellSize);
+                }
+            }
+        }
+
+        // Render helmet
+        const helmetX = this.maze.helmetPosition.x * this.cellSize;
+        const helmetY = this.maze.helmetPosition.y * this.cellSize;
+        this.renderEmoji('🪖', helmetX, helmetY);
+
+        // Render labour
+        const labourX = this.labour.position.x * this.cellSize;
+        const labourY = this.labour.position.y * this.cellSize;
+        const labourEmoji = this.gameState === 'won' ? '👷🏻‍♂️' : '👨🏻‍🔧';
+        this.renderEmoji(labourEmoji, labourX, labourY);
+    }
+
+    renderEmoji(emoji: string, x: number, y: number): void {
+        this.ctx.font = `${this.cellSize * 0.8}px Arial`;
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillStyle = '#fff';
+        this.ctx.fillText(emoji, x + this.cellSize / 2, y + this.cellSize / 2);
+    }
 }
 
-new Game();
+// Initialize game when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new Game();
+});
