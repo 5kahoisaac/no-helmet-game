@@ -1,5 +1,33 @@
 # Minimal Implementation Plan
 
+## Bug Fixes Required
+
+### Timer Display Bug - Critical Fix Needed
+- **Issue**: Victory message shows "You found the helmet in 0.0s!" instead of actual completion time
+- **Root Cause**: `getElapsedTime()` method returns 0 when timer is stopped
+- **Fix Required**: Store elapsed time before stopping timer in victory condition
+- **Implementation**: Modify `checkHelmetTouch()` to calculate elapsed time before timer.stop()
+
+### Timer Class Fix
+```typescript
+getElapsedTime(): number {
+  if (this.startTime === 0) return 0;
+  return this.active ? (Date.now() - this.startTime) / 1000 : this.duration - this.remaining;
+}
+```
+
+### Game Class Victory Fix
+```typescript
+if (this.checkHelmetTouch()) {
+  this.gameState = 'won';
+  this.stats.completionTime = this.timer.getElapsedTime(); // Store BEFORE stopping
+  this.timer.stop();
+  this.calculateScore();
+  this.showResult();
+  this.blockInput();
+}
+```
+
 ## Dependencies
 - **Odyc.js**: Core game framework
 - **TypeScript**: Compile to vanilla JavaScript
@@ -20,39 +48,109 @@
 
 ## Implementation Steps
 
-### 1. HTML Structure (index.html) - User Updated
+### 1. HTML Structure (index.html) - Updated with Current Implementation
 ```html
 <!DOCTYPE html>
 <html>
 <head>
-  <title>No Helmet Game</title>
-  <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
-  <style>
-    body { font-family: "Press Start 2P"; background: #212529; }
-    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-    #game-canvas { border: 4px solid #fff; }
-  </style>
+    <title>No Helmet Game</title>
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪖</text></svg>">
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Press Start 2P";
+            background: #212529;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            padding: 2rem;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        #game-canvas {
+            border: 4px solid #fff;
+            filter: blur(20px);
+            transition: filter 0.3s ease;
+        }
+
+        #game-canvas.game-started {
+            filter: none;
+        }
+
+        #root {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 600px;
+            box-sizing: content-box;
+        }
+
+        #status {
+            white-space: break-spaces;
+        }
+
+        #ui {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="nes-container with-title is-centered">
-      <p class="title">No Helmet Game</p>
-      <div id="timer" class="nes-text is-warning">Time: 30s</div>
-      <canvas id="game-canvas"></canvas>
-      <div id="ui">
-        <p id="status" class="nes-text is-primary">Press WASD to start! Find the helmet in 30 seconds!</p>
-        <button id="retry-btn" class="nes-btn is-success" style="display:none;">Try Again</button>
-      </div>
+<main class="container">
+    <div id="root" class="nes-container with-title with-white is-centered">
+        <p class="title">No Helmet Game</p>
+        <p class="nes-balloon ">
+            Thanks for playing my game — more details on
+            <a href="https://github.com/5kahoisaac/no-helmet-game" target="_blank">
+                <span class="is-dark"><i class="nes-icon github"></i></span>
+                <span class="is-primary">GitHub</span>
+            </a>.
+        </p>
+        <div id="timer" class="nes-text is-warning">Time: 30s</div>
+        <canvas id="game-canvas" width="600" height="600"></canvas>
+        <div id="ui">
+            <p id="status" class="nes-text is-primary">Press WASD to start! Find the helmet in 30 seconds!</p>
+            <button id="retry-btn" class="nes-btn is-success" style="display: none;">Try Again</button>
+        </div>
     </div>
-  </div>
-  <script src="game.js"></script>
+</main>
+<script src="game.js"></script>
 </body>
 </html>
 ```
 
+### 1.1. HTML Features - Current Implementation
+- **Helmet Favicon**: SVG-based emoji favicon using 🪖 helmet icon
+- **GitHub Integration**: Link to project repository with NES.css GitHub icon
+- **Blur Effect**: Canvas starts blurred and clears when game begins
+- **Flexbox Layout**: Modern responsive layout with gap spacing
+- **Fixed Canvas Size**: 600x600 pixel canvas for consistent gameplay
+- **Semantic HTML**: Uses `<main>` tag for proper document structure
+- **NES.css Balloon**: Styled message balloon for GitHub link
+- **Transition Effects**: Smooth blur-to-clear transition on game start
+- **White Container**: `with-white` class for better contrast
+- **Improved Spacing**: Gap-based layout for consistent element spacing
+
+### 1.2. Updated Styling Features
+- **Container Layout**: Flexbox with centered alignment and proper gaps
+- **Canvas Blur**: Initial 20px blur with smooth transition
+- **Root Container**: Fixed 600px width with content-box sizing
+- **Status Text**: Break-spaces for proper line wrapping
+- **UI Layout**: Vertical flex layout with centered alignment
+- **Responsive Design**: Max-width container with auto margins
 ### 2. NES.css Styling Integration
 - **Retro Theme**: 8-bit style containers and buttons
+- **Canvas Blur Effect**: Initial blur that clears when game starts
+- **GitHub Integration**: NES.css GitHub icon with proper styling
 - **Pixel Font**: "Press Start 2P" for authentic retro feel  
 - **NES Components**: Use nes-container, nes-btn, nes-text classes
 - **Color Scheme**: Dark background with retro accent colors
@@ -258,6 +356,7 @@
 - Emoji-based visual elements with NES.css retro styling
 - 30-second timer countdown with precision timing and warning states
 - WASD movement controls with automatic input blocking on game end
+- **Canvas blur effect management**: Clear blur on first input to reveal game
 - Win/lose conditions with automatic UI display and performance analytics
 
 ## Build Process
