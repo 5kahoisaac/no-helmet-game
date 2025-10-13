@@ -20,7 +20,7 @@
 
 ## Implementation Steps
 
-### 1. HTML Structure (index.html)
+### 1. HTML Structure (index.html) - User Updated
 ```html
 <!DOCTYPE html>
 <html>
@@ -88,7 +88,7 @@
 - Ensure precise navigation through narrow passages
 - Validate path width during generation
 
-### 5. Single File Architecture (TypeScript)
+### 5. Single File Architecture (TypeScript) - Advanced Features
 
 **All-in-One game.ts Structure**
 - 30-second countdown
@@ -116,94 +116,149 @@
 - Timer integration
 - Retry functionality with new BFS-evaluated maze
 
-### 6. Enhanced Maze Generation Algorithm
+### 6. Advanced Features Integration
+- **Millisecond Precision Timer**: Track completion time with 100ms accuracy
+- **Performance Analytics**: Calculate path efficiency, optimal moves, and scoring
+- **Achievement System**: Unlock challenges based on performance metrics
+- **Adaptive Difficulty**: Adjust maze complexity based on success rate
+- **Dynamic Elements**: Trap cells, checkpoints, and optional moving walls
+- **Heat Map Generation**: Visual analysis of attempted paths for learning
+- **Progressive Scoring**: Bonus points for speed and optimal route discovery
+- **Leaderboard System**: Track personal bests and top completion times
+
+### 7. Enhanced Maze Generation Algorithm with Advanced Complexity
 ```typescript
-1. Generate single-width path network (1x1 corridors only)
-2. Add 25-35 extensive fake paths of varying lengths (2-12 cells)
-3. Place helmet at fixed bottom right position (size-2, size-2)
-4. Ensure no walls appear at helmet position
-5. Evaluate BFS complexity (min/max path distances)
-6. Validate complexity threshold is met
-7. Ensure single-cell path width throughout maze
-8. Verify helmet accessibility via pathfinding
+1. Use Recursive Backtracking with proper complexity (Wikipedia algorithm)
+2. Implement Hunt-and-Kill algorithm for increased path complexity
+3. Add Wilson's algorithm for uniform spanning tree complexity
+4. Ensure helmet position (size-2, size-2) never has walls
+5. Create 35-50 fake dead-end paths with BFS complexity evaluation (increased from 25-35)
+6. Each fake path must have closed BFS routes to mislead players
+7. Avoid simple "L" shaped direct paths - use complex winding routes
+8. Validate at least one correct route exists to helmet (but complex, not direct)
+9. Use multi-tier BFS to measure path complexity and ensure optimal difficulty
+10. Maintain strict single-width (1x1) path enforcement throughout
+11. Add trap cells that temporarily slow movement for 2 seconds
+12. Place hidden checkpoints for progress saving in complex sections
+13. Implement optional moving walls that shift every 10 seconds
+14. Optimize generation to complete within 500ms for smooth gameplay
 ```
 
-### 7. BFS Complexity Evaluation System
-- **Min Distance Calculation**: BFS shortest path from start to helmet
-- **Max Distance Analysis**: Longest possible path in maze network
-- **Complexity Difference**: Calculate min/max distance difference
-- **Threshold Validation**: Ensure complexity meets difficulty requirements
-- **Regeneration Logic**: Regenerate maze if complexity insufficient
+**Advanced Algorithm Requirements**
+- **Algorithm Fusion**: Combine multiple Wikipedia algorithms for maximum complexity
+- **Dynamic Complexity**: Adjust difficulty based on player performance history
+- **Trap Integration**: Strategically place trap cells to increase navigation challenge
+- **Checkpoint System**: Hidden progress save points in longer maze sections
+- **Moving Elements**: Optional dynamic walls for advanced challenge modes
+- **Performance Optimization**: Sub-500ms generation time requirement
 
-### 8. Path Width Enforcement
-- **Single Cell Validation**: Check all paths are exactly 1x1 unit
-- **Width Control**: Prevent corridor widening during generation
-- **Narrow Passage**: Force navigation through single-cell paths
-- **Precision Navigation**: Ensure challenging movement requirements
+### 8. Advanced Performance Analytics System
+- **Precision Timing**: Millisecond accuracy for competitive scoring
+- **Path Efficiency**: Calculate optimal vs actual path ratio
+- **Move Tracking**: Record complete movement history for analysis
+- **Heat Map Generation**: Visual representation of attempted paths
+- **Performance Metrics**: Completion time, total moves, optimal moves, efficiency score
+- **Achievement Processing**: Unlock challenges based on performance conditions
+- **Difficulty Adaptation**: Adjust maze complexity based on success patterns
+- **Leaderboard Integration**: Track and display top performances
 
-### 9. Fixed Helmet System
+### 9. Wikipedia Maze Algorithm Implementation - Enhanced
+- **Recursive Backtracking**: Implement proper algorithm to avoid simple paths
+- **Hunt-and-Kill Method**: Create disconnected regions for complexity
+- **Path Complexity Analysis**: Ensure routes have multiple turns and branches
+- **Anti-Direct Path**: Prevent simple "L" shaped solutions to helmet
+- **Winding Route Enforcement**: Force complex navigation patterns
+- **Single-Width Maintenance**: Keep 1x1 paths while maximizing complexity
+- **BFS Validation**: Measure actual path complexity, not just distance
+
+### 8. Path Complexity Enforcement - Anti-Direct Routes
+- **Turn Count Validation**: Ensure solution path has minimum number of turns
+- **Direction Change Requirements**: Force multiple direction changes in solution
+- **Winding Path Creation**: Avoid straight lines and simple geometric shapes
+- **Complex Route Validation**: Measure path complexity beyond just length
+- **Anti-L-Shape Logic**: Specifically prevent simple "L" shaped solutions
+- **Maze Regeneration**: Regenerate if solution path is too direct or simple
+
+### 9. Single-Width Path Enforcement with Complexity
+- **1x1 Corridor Maintenance**: All paths exactly single-cell width
+- **Complex Winding Routes**: Single-width paths that wind and turn frequently
+- **No Wide Areas**: Prevent 2x2+ open spaces while maintaining complexity
+- **Precision Navigation**: Challenging movement through complex narrow passages
+- **Wikipedia Algorithm Compliance**: Use proper maze algorithms for complexity
 - **Bottom Right Placement**: Helmet always at (size-2, size-2)
-- **Wall-Free Guarantee**: No walls can appear at helmet position
-- **Consistent Goal**: Players know destination but face complex navigation
-- **Accessibility Guarantee**: BFS validation ensures reachability
-- **Predictable Target**: Remove randomness, focus on maze complexity
+- **Wall-Free Guarantee**: No walls can ever appear at helmet position
+- **Correct Route Guarantee**: At least one valid path from start to helmet
+- **BFS Validation**: Use BFS to verify helmet accessibility
+- **Predictable Target**: Players know destination, challenge is navigation
 
-### 10. Emoji Rendering System
+### 10. Fixed Helmet System with Complex Path Requirement
+- **Bottom Right Placement**: Helmet always at (size-2, size-2)
+- **Wall-Free Guarantee**: No walls can ever appear at helmet position
+- **Complex Route Guarantee**: Solution path must be winding, not direct "L" shape
+- **Anti-Simple Path**: Prevent straightforward geometric solutions
+- **BFS Complexity Validation**: Ensure solution requires multiple turns and exploration
+- **Predictable Target**: Players know destination, challenge is complex navigation
 - Canvas text rendering for emojis
 - Consistent sizing and positioning
 - No external asset loading required
 - Cross-platform emoji support
 
-### 11. Timer Implementation
+### 11. Emoji Rendering System
 - Countdown from 30 seconds
 - Starts on first movement
 - Real-time display updates
 - Game over on expiration
 
-### 12. Game States
+### 12. Timer Implementation
 - **Waiting**: Show instructions, timer not started
 - **Playing**: Timer active, accept input
 - **Won**: Show victory with 👷🏻‍♂️ emoji
 - **Lost**: Show "No Helmet" message with retry button
 
-### 13. NES.css Integration Features
+### 13. Game States
 - **Retro Containers**: nes-container with-title for game layout
 - **8-bit Buttons**: nes-btn is-success for retry functionality
 - **Pixel Typography**: nes-text with color variants (is-warning, is-primary)
 - **Authentic Font**: "Press Start 2P" for genuine retro experience
 - **Responsive Design**: Container-based layout adapts to screen sizes
 
-### 14. Development Workflow
+### 14. NES.css Integration Features
 - **Clear Step**: Run "npm run clear" before editing to remove bundled JS files
 - **Source Editing**: Focus on editing TypeScript source files (*.ts)
 - **Clean Development**: Avoid conflicts between compiled and bundled files
 - **Build Pipeline**: Clear → Edit TS → Compile → Bundle → Deploy
 
-### 15. ES6 Import Resolution
+### 15. Development Workflow
 - **Bundled JavaScript**: Single game.js file with all classes bundled
 - **No ES6 Imports**: Avoid "Cannot use import statement outside a module" errors
 - **Vanilla JavaScript**: Classes defined directly without import/export statements
 - **Browser Compatibility**: Standard script tag loading without module type
 - **Single File Bundle**: Timer, Labour, Maze, and Game classes in one file
 
-### 16. Vanilla JavaScript Features
+### 16. ES6 Import Resolution
 - Canvas 2D context for emoji rendering
 - setInterval for timer updates
 - Event listeners for WASD input
 - Button click handler for retry
 - Simple state management
 
-## Minimal Feature Set
+### 17. Vanilla JavaScript Features
 - 30x30 grid maze with single-width paths (1x1 corridors)
 - Wall constraint: no walls at helmet position (size-2, size-2)
-- BFS complexity evaluation for optimal difficulty
-- Fixed helmet at bottom right corner with guaranteed wall-free placement
-- Extensive fake paths (25-35 dead ends) with complexity validation
-- Emoji-based visual elements
-- NES.css retro styling with 8-bit aesthetics
-- 30-second timer countdown
-- WASD movement controls
-- Win/lose conditions with retry functionality
+- Wikipedia maze algorithm implementation for complex winding paths
+- Anti-direct path logic to prevent simple "L" shaped solutions
+- Fixed helmet at bottom right corner with complex route requirement
+- Extensive fake paths (35-50 dead ends) with BFS complexity validation (increased complexity)
+- Advanced performance analytics with millisecond precision timing
+- Achievement system with unlockable challenges and maze variants
+- Adaptive difficulty adjustment based on player performance history
+- Dynamic elements: trap cells, checkpoints, and optional moving walls
+- Heat map generation for path analysis and learning insights
+- Progressive scoring system with speed bonuses and efficiency metrics
+- Emoji-based visual elements with NES.css retro styling
+- 30-second timer countdown with precision timing and warning states
+- WASD movement controls with automatic input blocking on game end
+- Win/lose conditions with automatic UI display and performance analytics
 
 ## Build Process
 1. Run "npm run clear" to remove bundled *.js files before editing

@@ -4,15 +4,84 @@
 - [ ] Install TypeScript for development
 - [ ] Create project structure (src/)
 - [ ] Setup TypeScript configuration
-- [ ] Create HTML template with NES.css integration and retro UI
+- [x] HTML template with NES.css integration and retro UI (User Updated - Do Not Modify)
 - [ ] Verify package.json has "clear" script for removing bundled JS files
 
-## Single File Architecture
+## User Updates - Do Not Modify
+- [x] HTML styling with flexbox layout and proper spacing (User Updated)
+- [x] Opacity-based button show/hide instead of display property (User Updated)
+- [x] Improved container structure with #root and gap settings (User Updated)
+- [x] White-space break-spaces for status text (User Updated)
+
+## Maze Generation - Advanced Complexity Implementation
+- [ ] **CRITICAL: Implement Wikipedia maze generation algorithms (Recursive Backtracking)**
+- [ ] **CRITICAL: Add Hunt-and-Kill algorithm for increased path complexity**
+- [ ] **CRITICAL: Integrate Wilson's algorithm for uniform spanning tree complexity**
+- [ ] **CRITICAL: Prevent simple "L" shaped direct paths to helmet**
+- [ ] **CRITICAL: Increase fake paths to 35-50 branches (up from 25-35)**
+- [ ] Fix maze generation to use proper BFS complexity evaluation
+- [ ] Implement closed BFS routes in fake paths to mislead players
+- [ ] Guarantee helmet position (size-2, size-2) never has walls
+- [ ] Validate at least one correct route exists from start to helmet (but complex)
+- [ ] Use multi-tier BFS to measure and optimize path complexity for 30-second challenge
+- [ ] Create multiple promising routes that lead to dead ends
+- [ ] **CRITICAL: Ensure all paths are single-width (1x1) for precise navigation**
+- [ ] **CRITICAL: Add turn count validation to prevent simple geometric solutions**
+- [ ] **CRITICAL: Optimize generation to complete within 500ms for smooth gameplay**
+- [ ] Remove current broken maze generation that causes accessibility issues
+
+## Advanced Game Elements Implementation
+- [ ] **CRITICAL: Implement trap cells that slow movement for 2 seconds**
+- [ ] **CRITICAL: Add hidden checkpoint system for progress saving**
+- [ ] **CRITICAL: Create optional moving walls that shift every 10 seconds**
+- [ ] Add strategic trap cell placement to increase navigation complexity
+- [ ] Implement checkpoint detection and progress preservation
+- [ ] Create moving wall mechanics with collision detection
+- [ ] Add visual indicators for trap cells and checkpoints
+- [ ] Test dynamic element interactions with maze generation
+
+## Advanced Timer System Implementation
+- [ ] **CRITICAL: Implement millisecond precision timing (100ms accuracy)**
+- [ ] **CRITICAL: Add warning states at 10s, 5s, and 3s remaining**
+- [ ] **CRITICAL: Add automatic input blocking when timer expires**
+- [ ] **CRITICAL: Add automatic UI display on game end (no manual trigger needed)**
+- [ ] Implement precision timing display with tenths of seconds
+- [ ] Add visual/audio warning alerts for time remaining
+- [ ] Create automatic game state transitions on timer expiration
+- [ ] Track completion time for performance scoring
+- [ ] **CRITICAL: Implement proper Recursive Backtracking algorithm**
+- [ ] **CRITICAL: Add Hunt-and-Kill method for disconnected regions**
+- [ ] Research and implement Wilson's algorithm for uniform complexity
+- [ ] Create winding path enforcement to avoid straight lines
+- [ ] Add direction change requirements for complex navigation
+- [ ] Implement anti-direct path logic specifically for "L" shape prevention
+- [ ] Add maze regeneration if solution path is too simple or direct
 - [ ] Consolidate all classes into single game.ts file
 - [ ] Remove individual TypeScript files (timer.ts, labour.ts, maze.ts)
 - [ ] Ensure no import/export statements in single file
 - [ ] Test single file compiles without module dependencies
 - [ ] Verify all classes are accessible within single file scope
+
+## Performance Analytics & Scoring System
+- [ ] **CRITICAL: Implement GameStats interface for comprehensive tracking**
+- [ ] **CRITICAL: Add path efficiency calculation (optimal vs actual moves)**
+- [ ] **CRITICAL: Create achievement system with unlockable challenges**
+- [ ] **CRITICAL: Implement adaptive difficulty based on performance history**
+- [ ] Add move history tracking for complete path analysis
+- [ ] Calculate performance scores based on time and efficiency
+- [ ] Create heat map generation for visual path analysis
+- [ ] Implement leaderboard system for top completion times
+- [ ] Add bonus scoring for speed and optimal route discovery
+- [ ] Track personal best times and display achievements
+
+## Path Complexity Validation - Anti-Simple Routes
+- [ ] **CRITICAL: Implement turn count validation for solution path**
+- [ ] **CRITICAL: Add direction change requirements (minimum turns)**
+- [ ] **CRITICAL: Detect and prevent simple "L" shaped solutions**
+- [ ] Measure path complexity beyond just distance (turns, direction changes)
+- [ ] Add winding path creation to avoid geometric shapes
+- [ ] Implement maze regeneration for overly simple solutions
+- [ ] Validate solution requires exploration, not direct navigation
 
 ## Development Workflow
 - [ ] Run "npm run clear" before editing source files
@@ -82,14 +151,25 @@
 - [ ] Validate every maze before game start with fixed helmet
 - [ ] Verify wall constraint is enforced during maze generation
 
-## Core Development
+## Core Development - Advanced Features Priority
 - [ ] Run "npm run clear" before starting development
-- [ ] Implement Timer class in single game.ts file
-- [ ] Implement Labour class with emoji rendering and helmet touch detection
-- [ ] Implement Maze class with BFS evaluation and wall constraint
-- [ ] Implement Game class with state management (waiting/playing/won/lost)
-- [ ] Add WASD input handling with timer activation
-- [ ] Implement collision detection and movement validation
+- [ ] Implement Timer class with millisecond precision and warning states (enhanced)
+- [ ] Implement Labour class with move history and path efficiency tracking (enhanced)
+- [ ] **CRITICAL: Rewrite Maze class with Wikipedia maze generation algorithms**
+- [ ] **CRITICAL: Implement Recursive Backtracking with proper complexity**
+- [ ] **CRITICAL: Add Hunt-and-Kill algorithm for winding paths**
+- [ ] **CRITICAL: Integrate Wilson's algorithm for uniform complexity**
+- [ ] **CRITICAL: Add trap cells, checkpoints, and moving walls support**
+- [ ] **CRITICAL: Fix maze generation to create misleading closed BFS routes**
+- [ ] **CRITICAL: Ensure helmet accessibility with wall constraint enforcement**
+- [ ] **CRITICAL: Implement single-width (1x1) path enforcement for precise navigation**
+- [ ] **CRITICAL: Add anti-"L" shape logic to prevent simple direct paths**
+- [ ] **CRITICAL: Implement performance analytics and scoring system**
+- [ ] **CRITICAL: Add achievement system with unlockable challenges**
+- [ ] **CRITICAL: Create adaptive difficulty based on player performance**
+- [ ] Implement Game class with advanced state management (working, user updated styling)
+- [ ] Add WASD input handling with automatic blocking on game end (enhanced)
+- [ ] Implement collision detection and movement validation (working)
 - [ ] Ensure all classes work together in single file scope
 
 ## Emoji Rendering System
@@ -106,27 +186,40 @@
 - [ ] Lose condition when timer expires
 - [ ] Game state transitions (waiting→playing→won/lost)
 
-## BFS Complexity Validation
-- [ ] Test BFS min distance calculation accuracy
-- [ ] Verify BFS max distance analysis correctness
-- [ ] Ensure complexity difference meets threshold requirements
-- [ ] Test maze regeneration when complexity insufficient
-- [ ] Validate BFS evaluation provides optimal difficulty
+## BFS Complexity Validation - Advanced Testing
+- [ ] **CRITICAL: Test Wikipedia maze algorithms create complex winding paths**
+- [ ] **CRITICAL: Validate solution path has minimum turn count (no "L" shapes)**
+- [ ] **CRITICAL: Test increased fake paths (35-50) create sufficient complexity**
+- [ ] **CRITICAL: Validate maze generation completes within 500ms performance requirement**
+- [ ] Test BFS complexity evaluation creates misleading routes
+- [ ] Verify fake paths have closed BFS routes that confuse players
+- [ ] Ensure helmet accessibility via BFS pathfinding validation
+- [ ] Test that maze generates 35-50 complex fake dead-end paths (increased complexity)
+- [ ] Validate multi-tier BFS distance measurements for optimal 30-second difficulty
+- [ ] Test multiple promising routes that lead to dead ends
+- [ ] Verify no walls appear at helmet position in any generated maze
+- [ ] **CRITICAL: Test maze regeneration when solution is too simple**
+- [ ] **CRITICAL: Test trap cell placement and movement slowing mechanics**
+- [ ] **CRITICAL: Test checkpoint system and progress preservation**
+- [ ] **CRITICAL: Test moving wall mechanics and collision detection**
 
-## Path Width Validation
+## Path Width Validation - Critical for Navigation
+- [ ] **CRITICAL: Implement single-width path (1x1) enforcement**
 - [ ] Test all paths are exactly 1x1 unit width
 - [ ] Verify no wide corridors exist in generated mazes
 - [ ] Ensure single-cell navigation throughout maze
 - [ ] Test path width enforcement during generation
-- [ ] Validate precise navigation requirements
+- [ ] Validate precise navigation requirements for challenge
+- [ ] Prevent wide road generation throughout maze
 
-## Enhanced Quality Assurance with Wall Constraint
-- [ ] Test maze complexity with BFS evaluation (25-35 fake paths)
+## Enhanced Quality Assurance with BFS Complexity
+- [ ] Test maze complexity with proper BFS evaluation (25-35 fake paths)
 - [ ] Verify helmet accessibility at fixed bottom right position
 - [ ] Ensure no walls appear at helmet position in any generated maze
+- [ ] Test that BFS creates misleading closed routes for fake paths
 - [ ] Ensure maze regeneration works with BFS complexity validation
 - [ ] Test that wall constraint is properly enforced
-- [ ] Validate solution path always exists to fixed helmet location
+- [ ] Validate at least one correct solution path always exists to helmet
 - [ ] Test BFS complexity provides appropriate 30-second challenge
 
 ## Fixed Location Validation with Wall Constraint
@@ -154,17 +247,33 @@
 - [ ] Test that removed files don't break build process
 
 ## Polish
+## Polish - Advanced Features Testing
 - [ ] Run "npm run clear" before final testing
 - [ ] Test single file architecture compiles correctly
-- [ ] Test NES.css styling renders correctly across browsers
+- [ ] Test NES.css styling renders correctly across browsers (User Updated - Do Not Modify)
 - [ ] Verify retro font loads properly
 - [ ] Test all movement directions work correctly
 - [ ] Verify timer starts only on first move
+- [ ] **CRITICAL: Test millisecond precision timer with warning states**
+- [ ] **CRITICAL: Test automatic input blocking when game ends**
+- [ ] **CRITICAL: Test automatic UI display without manual trigger**
 - [ ] Ensure retry generates new BFS-validated maze with fixed helmet
 - [ ] Test single-width paths provide appropriate navigation challenge
-- [ ] Verify BFS complexity evaluation creates optimal difficulty
+- [ ] **CRITICAL: Verify Wikipedia maze algorithms create proper complex paths**
+- [ ] **CRITICAL: Test anti-"L" shape logic prevents simple direct routes**
+- [ ] **CRITICAL: Test single-width paths (1x1) provide precise navigation challenge**
+- [ ] **CRITICAL: Validate turn count and direction change requirements**
+- [ ] **CRITICAL: Test performance analytics and scoring system**
+- [ ] **CRITICAL: Test achievement system and unlockable challenges**
+- [ ] **CRITICAL: Test adaptive difficulty adjustment based on performance**
+- [ ] **CRITICAL: Test trap cells slow movement for 2 seconds correctly**
+- [ ] **CRITICAL: Test checkpoint system preserves progress**
+- [ ] **CRITICAL: Test moving walls shift every 10 seconds (optional mode)**
+- [ ] **CRITICAL: Test heat map generation for path analysis**
+- [ ] **CRITICAL: Test leaderboard and personal best tracking**
 - [ ] Test wall constraint prevents walls at helmet position
 - [ ] Test bundled JavaScript loads without ES6 import errors
 - [ ] Verify cross-browser compatibility with vanilla JavaScript
 - [ ] Confirm clean file structure (only game.ts and index.html)
+- [ ] **Do Not Modify: User updated opacity-based button styling**
 - [ ] Build and bundle for deployment with NES.css integration

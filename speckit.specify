@@ -19,65 +19,122 @@ A 2D maze navigation game with a 30-second time limit where the player controls 
   - A: Move left
   - D: Move right
 
-### Timer System
-- **Duration**: 30 seconds countdown
+### Timer System - Advanced
+- **Duration**: 30 seconds countdown with millisecond precision
 - **Trigger**: Starts on first WASD key press
-- **Display**: Real-time countdown visible to player
+- **Display**: Real-time countdown visible to player with tenths of seconds
 - **Timeout**: Shows "No Helmet" message when time expires
+- **Auto-Block Controls**: Automatically disable WASD input when timer expires
+- **Auto-Show UI**: Automatically display defeat message and restart button on timeout
+- **Auto-Show Success**: Automatically display success message and restart button on win
+- **Warning States**: Visual/audio warnings at 10s, 5s, and 3s remaining
+- **Precision Timing**: Track completion time for performance scoring
+- **Speed Bonus**: Award bonus points for faster completion times
 
-### Maze System
-- **Generation**: Random maze layout with guaranteed solution path
+### Maze System - Advanced Complexity
+- **Generation**: Multi-algorithm hybrid maze with guaranteed solution path
 - **Complexity**: Highly complex with BFS distance evaluation between min/max paths
 - **Structure**: Grid-based with walls, correct paths, and numerous misleading dead ends
 - **Path Width**: All walkable paths are exactly 1x1 unit (single cell width)
-- **Fake Paths**: Extensive complex dead-end branches to create maximum confusion
+- **Fake Paths**: Extensive complex dead-end branches to create maximum confusion (35-50 branches)
 - **Start Point**: Fixed entry position at (1,1)
 - **Helmet Location**: Fixed at bottom right corner (size-2, size-2)
-- **Complexity Evaluation**: BFS analysis to ensure optimal min/max path difference
+- **Complexity Evaluation**: Multi-tier BFS analysis to ensure optimal min/max path difference
 - **Accessibility**: Helmet position is always reachable from start via pathfinding validation
 - **Wall Constraint**: Walls must not appear at the helmet position - helmet must be placed in open path
 - **Collision**: Labour cannot move through walls
+- **Dynamic Elements**: Moving walls that shift every 10 seconds (optional challenge mode)
+- **Trap Cells**: Special cells that temporarily slow movement for 2 seconds
+- **Checkpoint System**: Hidden checkpoints that save progress in complex mazes
+- **Multi-Level Complexity**: Adaptive difficulty based on player performance history
 
-### Win/Lose Conditions
+### Win/Lose Conditions - Advanced Scoring
 - **Win**: Labour reaches and touches helmet at finish point within 30 seconds
-- **Lose**: Timer expires before touching helmet - show "No Helmet" message
-- **Retry**: Button appears after game ends to restart with new complex maze
+  - Automatically show success message and restart button
+  - Block further WASD input until restart
+  - Calculate performance score based on completion time and path efficiency
+  - Award bonus points for optimal route discovery
+  - Track personal best times and display achievements
+- **Lose**: Timer expires before touching helmet
+  - Automatically show "No Helmet" message and restart button
+  - Block WASD input when timer reaches zero
+  - Display performance analytics (distance traveled, time spent)
+  - Show heat map of attempted paths for learning
+- **Retry**: Button appears automatically after game ends to restart with new complex maze
+- **Progressive Difficulty**: Increase maze complexity based on success rate
+- **Achievement System**: Unlock special challenges and maze variants
+- **Leaderboard**: Track top completion times and optimal path discoveries
 
 ## Game Components
 
-### Core Classes (TypeScript)
+### Core Classes (TypeScript) - Advanced Architecture
 ```typescript
 interface Position {
   x: number;
   y: number;
 }
 
+interface GameStats {
+  completionTime: number;
+  pathEfficiency: number;
+  totalMoves: number;
+  optimalMoves: number;
+  score: number;
+}
+
+interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  unlocked: boolean;
+  condition: (stats: GameStats) => boolean;
+}
+
 class Timer {
   duration: number = 30;
   remaining: number = 30;
   active: boolean = false;
+  precision: number = 100; // millisecond precision
+  onExpired: () => void;
+  onWarning: (seconds: number) => void;
   start(): void;
   update(): void;
   isExpired(): boolean;
+  stop(): void;
+  getElapsedTime(): number;
 }
 
 class Labour {
   position: Position;
+  moveHistory: Position[];
+  totalMoves: number;
+  isSlowed: boolean;
+  slowEndTime: number;
   move(direction: 'up' | 'down' | 'left' | 'right'): void;
   isAtPosition(pos: Position): boolean;
+  calculatePathEfficiency(optimalPath: Position[]): number;
+  reset(startX: number, startY: number): void;
 }
 
 class Maze {
   grid: number[][];
   startPosition: Position;
-  helmetPosition: Position; // Fixed at bottom right
+  helmetPosition: Position;
+  trapCells: Position[];
+  checkpoints: Position[];
+  movingWalls: { pos: Position; direction: Position; nextMove: number }[];
+  difficultyLevel: number;
   generate(): void;
   addExtensiveFakePaths(): void;
   evaluateBFSComplexity(): { minDistance: number; maxDistance: number; difference: number };
   validateHelmetAccessibility(): boolean;
   ensureSingleWidthPaths(): void;
+  addDynamicElements(): void;
+  updateMovingWalls(currentTime: number): void;
   isValidMove(position: Position): boolean;
   isPath(position: Position): boolean;
+  isTrapCell(position: Position): boolean;
+  isCheckpoint(position: Position): boolean;
 }
 
 class Game {
@@ -85,24 +142,40 @@ class Game {
   maze: Maze;
   timer: Timer;
   gameState: 'waiting' | 'playing' | 'won' | 'lost';
+  stats: GameStats;
+  achievements: Achievement[];
+  personalBest: number;
+  difficultyLevel: number;
   handleInput(key: string): void;
   checkHelmetTouch(): boolean;
-  checkTimeExpired(): boolean;
+  onTimerExpired(): void;
+  blockInput(): void;
   showRetryButton(): void;
+  calculateScore(): number;
+  updateAchievements(): void;
+  showPerformanceAnalytics(): void;
+  generateHeatMap(): void;
+  adjustDifficulty(): void;
   restart(): void;
   render(): void;
 }
 ```
 
-### Maze Generation Requirements
-- **Base Path**: Generate comprehensive path network with single-width corridors
-- **Extensive Fake Paths**: Add numerous misleading branches of varying lengths
+### Enhanced Maze Generation Requirements - Advanced Algorithms
+- **Base Path**: Generate comprehensive path network with single-width corridors using hybrid algorithms
+- **Extensive Fake Paths**: Add 35-50 misleading branches of varying lengths (3-15 cells)
 - **Path Width Control**: Ensure all walkable paths are exactly 1x1 unit (single cell)
 - **Fixed Helmet Placement**: Helmet always at bottom right corner (size-2, size-2)
-- **BFS Complexity Evaluation**: Analyze min/max path distances to optimize difficulty
-- **Accessibility Validation**: Verify helmet position is reachable via pathfinding
+- **Multi-Tier BFS Complexity**: Analyze min/max path distances with advanced metrics
+- **Accessibility Validation**: Verify helmet position is reachable via multiple pathfinding algorithms
 - **Wall Placement**: Ensure helmet is placed in open path, walls must not appear at helmet position
-- **Complexity Metrics**: Use BFS distance difference to measure maze difficulty
+- **Complexity Metrics**: Use advanced BFS distance analysis with path efficiency calculations
+- **Dynamic Complexity**: Adjust maze difficulty based on player performance history
+- **Algorithm Fusion**: Combine Recursive Backtracking, Hunt-and-Kill, and Wilson's algorithms
+- **Trap Integration**: Strategically place trap cells to increase navigation complexity
+- **Checkpoint Placement**: Add hidden progress save points in longer maze sections
+- **Moving Elements**: Implement optional dynamic walls for advanced challenge modes
+- **Performance Optimization**: Ensure maze generation completes within 500ms for smooth gameplay
 
 ### Input System
 - Listen for keydown events
@@ -128,21 +201,25 @@ class Game {
 - **Status Messages**: Game instructions and results
 - **Retry Button**: Appears after win/lose to restart game
 
-## Game Flow
-1. Generate random maze with comprehensive single-width path network
-2. Add extensive complex fake dead-end paths to maximize confusion
-3. Ensure all paths are exactly 1x1 unit width (single cell corridors)
-4. Place helmet at fixed bottom right position (size-2, size-2)
-5. Evaluate BFS complexity by analyzing min/max path distances
-6. Validate helmet accessibility and path complexity meets requirements
-7. Place Labour at fixed start position (1,1)
-8. Wait for first WASD input to start timer
-9. Listen for WASD input and move Labour
-10. Update timer countdown display
-11. Check if Labour touched helmet at bottom right (win condition)
-12. Check if timer expired (lose condition)
-13. Show result message and retry button
-14. Allow restart with new complex maze and BFS complexity evaluation
+## Game Flow - Advanced Mechanics
+1. Initialize advanced maze generation with hybrid algorithms and performance monitoring
+2. Generate multi-tier complexity maze with 35-50 fake dead-end paths for maximum confusion
+3. Ensure all paths are exactly 1x1 unit width with advanced collision detection
+4. Place helmet at fixed bottom right position (size-2, size-2) with accessibility validation
+5. Evaluate multi-dimensional BFS complexity by analyzing min/max path distances and efficiency metrics
+6. Validate helmet accessibility using multiple pathfinding algorithms and complexity requirements
+7. Add dynamic elements: trap cells, checkpoints, and optional moving walls
+8. Place Labour at fixed start position (1,1) and initialize performance tracking
+9. Wait for first WASD input to start precision timer with millisecond accuracy
+10. Listen for WASD input, move Labour, and track movement history for analytics
+11. Update timer countdown display with precision timing and warning states
+12. **Automatically check timer expiration and handle timeout with performance analysis**
+13. Check if Labour touched helmet at bottom right (win condition with scoring)
+14. **Automatically show result message, performance analytics, and retry button on game end**
+15. **Block WASD input when game state is 'won' or 'lost' with achievement processing**
+16. Calculate performance score, update achievements, and adjust difficulty level
+17. Display performance analytics including path efficiency and completion time
+18. Allow restart with new complex maze, updated difficulty, and BFS complexity evaluation
 
 - **Visual Elements**
 - **Labour**: Distinct character sprite/icon
