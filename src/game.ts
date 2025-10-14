@@ -1,6 +1,20 @@
+enum GameState {
+  WAITING = 'waiting',
+  PLAYING = 'playing',
+  WON = 'won',
+  LOST = 'lost'
+}
+
+enum Direction {
+  UP = 'up',
+  DOWN = 'down',
+  LEFT = 'left',
+  RIGHT = 'right'
+}
+
 interface Position {
-  x: number;
-  y: number;
+  readonly x: number;
+  readonly y: number;
 }
 
 interface GameStats {
@@ -46,12 +60,16 @@ class Timer {
     if (this.remaining <= 0) {
       this.stop();
       this.onExpired();
-    } else if (this.remaining <= 10 && this.remaining > 9.9) {
-      this.onWarning(10);
-    } else if (this.remaining <= 5 && this.remaining > 4.9) {
-      this.onWarning(5);
-    } else if (this.remaining <= 3 && this.remaining > 2.9) {
-      this.onWarning(3);
+      return;
+    }
+    
+    // Eliminate special cases - data-driven approach
+    const warnings = [10, 5, 3];
+    const currentSecond = Math.ceil(this.remaining);
+    
+    if (warnings.includes(currentSecond) && 
+        Math.ceil(this.remaining + this.precision / 1000) > currentSecond) {
+      this.onWarning(currentSecond);
     }
   }
 
@@ -91,17 +109,17 @@ class Labour {
     this.moveHistory.push({ ...this.position });
   }
 
-  move(direction: 'up' | 'down' | 'left' | 'right'): void {
+  move(direction: Direction): void {
     if (this.isSlowed && Date.now() < this.slowEndTime) return;
     
     this.isSlowed = false;
     const newPos = { ...this.position };
     
     switch (direction) {
-      case 'up': newPos.y--; break;
-      case 'down': newPos.y++; break;
-      case 'left': newPos.x--; break;
-      case 'right': newPos.x++; break;
+      case Direction.UP: newPos.y--; break;
+      case Direction.DOWN: newPos.y++; break;
+      case Direction.LEFT: newPos.x--; break;
+      case Direction.RIGHT: newPos.x++; break;
     }
     
     this.position = newPos;
@@ -271,7 +289,7 @@ class Game {
   labour: Labour;
   maze: Maze;
   timer: Timer;
-  gameState: 'waiting' | 'playing' | 'won' | 'lost' = 'waiting';
+  gameState: GameState = GameState.WAITING;
   stats: GameStats;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -301,8 +319,10 @@ class Game {
     this.render();
   }
 
+  private eventListeners: (() => void)[] = [];
+
   setupEventListeners(): void {
-    document.addEventListener('keydown', (e) => {
+    const keydownHandler = (e: KeyboardEvent) => {
       if (this.inputBlocked) return;
       
       const key = e.key.toLowerCase();
@@ -310,29 +330,44 @@ class Game {
         e.preventDefault();
         this.handleInput(key);
       }
-    });
+    };
     
+    const retryHandler = () => this.restart();
+    
+    document.addEventListener('keydown', keydownHandler);
     const retryBtn = document.getElementById('retry-btn') as HTMLButtonElement;
-    retryBtn.addEventListener('click', () => this.restart());
+    retryBtn.addEventListener('click', retryHandler);
+    
+    // Track cleanup functions
+    this.eventListeners.push(
+      () => document.removeEventListener('keydown', keydownHandler),
+      () => retryBtn.removeEventListener('click', retryHandler)
+    );
+  }
+
+  cleanup(): void {
+    this.eventListeners.forEach(cleanup => cleanup());
+    this.eventListeners = [];
+    this.timer.stop();
   }
 
   handleInput(key: string): void {
-    if (this.gameState === 'waiting') {
-      this.gameState = 'playing';
+    if (this.gameState === GameState.WAITING) {
+      this.gameState = GameState.PLAYING;
       this.timer.start();
       this.clearCanvasBlur();
     }
     
-    if (this.gameState !== 'playing') return;
+    if (this.gameState !== GameState.PLAYING) return;
     
     const oldPos = { ...this.labour.position };
-    let direction: 'up' | 'down' | 'left' | 'right';
+    let direction: Direction;
     
     switch (key) {
-      case 'w': direction = 'up'; break;
-      case 's': direction = 'down'; break;
-      case 'a': direction = 'left'; break;
-      case 'd': direction = 'right'; break;
+      case 'w': direction = Direction.UP; break;
+      case 's': direction = Direction.DOWN; break;
+      case 'a': direction = Direction.LEFT; break;
+      case 'd': direction = Direction.RIGHT; break;
       default: return;
     }
     
@@ -350,8 +385,8 @@ class Game {
     }
     
     if (this.checkHelmetTouch()) {
-      this.gameState = 'won';
-      this.stats.completionTime = this.timer.getElapsedTime(); // Store BEFORE stopping
+      this.gameState = GameState.WON;
+      this.stats.completionTime = this.timer.getElapsedTime();
       this.timer.stop();
       this.calculateScore();
       this.showResult();
@@ -366,7 +401,7 @@ class Game {
   }
 
   onTimerExpired(): void {
-    this.gameState = 'lost';
+    this.gameState = GameState.LOST;
     this.showResult();
     this.blockInput();
   }
@@ -384,7 +419,7 @@ class Game {
     const statusEl = document.getElementById('status')!;
     const retryBtn = document.getElementById('retry-btn')!;
     
-    if (this.gameState === 'won') {
+    if (this.gameState === GameState.WON) {
       statusEl.textContent = `Victory! You found the helmet in ${this.stats.completionTime.toFixed(1)}s!\nScore: ${this.stats.score}`;
     } else {
       statusEl.textContent = 'No Helmet\nTime expired! Try again to find the helmet.';
@@ -444,7 +479,9 @@ class Game {
   }
 
   restart(): void {
-    this.gameState = 'waiting';
+    this.cleanup();
+    
+    this.gameState = GameState.WAITING;
     this.inputBlocked = false;
     this.timer.reset();
     this.maze = new Maze();
@@ -467,6 +504,7 @@ class Game {
     timerEl.style.color = '';
     this.canvas.classList.remove('game-started');
     
+    this.setupEventListeners();
     this.render();
   }
 

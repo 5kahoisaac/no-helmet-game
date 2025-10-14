@@ -391,3 +391,176 @@ render(): void {
 - NES.css provides consistent retro aesthetic across browsers
 - ES6 import issues resolved with bundled vanilla JavaScript
 - Balanced difficulty: extremely challenging but always solvable within 30 seconds
+
+## 🔧 Linus Torvalds Suggestions - Code Quality & Architecture
+
+### Critical Issues - "Never Break Userspace"
+- **Timer Precision Bug**: setInterval(100ms) but display updates only on whole seconds
+- **Memory Leak**: Event listeners not cleaned up on game restart
+- **Race Condition**: Timer expiration can occur during input processing
+- **Infinite Recursion**: Maze generation lacks bounds checking for accessibility validation
+
+### "Good Taste" - Eliminate Special Cases
+
+#### Timer Warning Logic Simplification
+```typescript
+// Current - multiple special cases
+if (this.remaining <= 10 && this.remaining > 9.9) {
+  this.onWarning(10);
+} else if (this.remaining <= 5 && this.remaining > 4.9) {
+  this.onWarning(5);
+}
+
+// Better - eliminate special cases
+private lastWarnings = new Set<number>();
+const warnings = [10, 5, 3];
+const currentSecond = Math.ceil(this.remaining);
+if (warnings.includes(currentSecond) && !this.lastWarnings.has(currentSecond)) {
+  this.onWarning(currentSecond);
+  this.lastWarnings.add(currentSecond);
+}
+```
+
+#### Movement Validation Cleanup
+```typescript
+// Current - complex backtracking
+this.labour.move(direction);
+if (!this.maze.isValidMove(this.labour.position)) {
+  this.labour.position = oldPos;
+  this.labour.totalMoves--;
+  this.labour.moveHistory.pop();
+}
+
+// Better - validate before moving
+const newPos = this.calculateNewPosition(direction);
+if (this.maze.isValidMove(newPos)) {
+  this.labour.moveTo(newPos);
+}
+```
+
+### Performance Optimizations
+
+#### Static Constants
+```typescript
+// Replace repeated array creation
+private static readonly DIRECTIONS = [
+  { dx: 0, dy: -1 }, { dx: 1, dy: 0 }, { dx: 0, dy: 1 }, { dx: -1, dy: 0 }
+] as const;
+
+const GAME_CONFIG = {
+  MAZE_SIZE: 30,
+  TIMER_DURATION: 30,
+  CELL_SIZE: 20,
+  FAKE_PATH_MIN: 35,
+  FAKE_PATH_MAX: 50
+} as const;
+```
+
+#### Bounded Maze Generation
+```typescript
+generate(): void {
+  let attempts = 0;
+  const maxAttempts = 10;
+  
+  do {
+    this.generateMaze();
+    attempts++;
+  } while (!this.validateHelmetAccessibility() && attempts < maxAttempts);
+  
+  if (attempts >= maxAttempts) {
+    this.generateSimplePath(); // Fallback to guaranteed solution
+  }
+}
+```
+
+### Type Safety & API Stability
+
+#### Immutable Interfaces
+```typescript
+interface Position {
+  readonly x: number;
+  readonly y: number;
+}
+
+enum GameState {
+  WAITING = 'waiting',
+  PLAYING = 'playing', 
+  WON = 'won',
+  LOST = 'lost'
+}
+
+enum Direction {
+  UP = 'up',
+  DOWN = 'down',
+  LEFT = 'left', 
+  RIGHT = 'right'
+}
+```
+
+#### Defensive Programming
+```typescript
+constructor() {
+  this.canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
+  if (!this.canvas) {
+    throw new Error('Canvas element not found');
+  }
+  
+  this.ctx = this.canvas.getContext('2d');
+  if (!this.ctx) {
+    throw new Error('2D context not supported');
+  }
+}
+```
+
+### Architecture Improvements
+
+#### Separation of Concerns
+```typescript
+class GameRenderer {
+  render(gameState: GameState): void { /* rendering only */ }
+}
+
+class GameLogic {
+  update(input: Input): GameState { /* logic only */ }
+}
+
+class Game {
+  private renderer: GameRenderer;
+  private logic: GameLogic;
+  // Orchestrate components, don't do everything
+}
+```
+
+#### Resource Management
+```typescript
+class Game {
+  private eventListeners: (() => void)[] = [];
+  
+  cleanup(): void {
+    this.eventListeners.forEach(cleanup => cleanup());
+    this.eventListeners = [];
+    this.timer.stop();
+  }
+  
+  restart(): void {
+    this.cleanup();
+    this.initialize();
+  }
+}
+```
+
+### Implementation Priority
+1. **Fix timer precision bug** - Critical for gameplay
+2. **Add bounds checking to maze generation** - Prevents infinite loops
+3. **Implement proper cleanup** - Prevents memory leaks
+4. **Eliminate special cases in timer warnings** - Cleaner code
+5. **Add defensive programming** - Fail fast on errors
+6. **Separate rendering from logic** - Better maintainability
+
+### Code Quality Principles Applied
+- **Simplicity over cleverness** - Eliminate complex conditional logic
+- **Fail fast** - Add proper error handling and bounds checking  
+- **No special cases** - Use data-driven approaches instead of if/else chains
+- **Resource management** - Clean up properly to prevent leaks
+- **Type safety** - Use enums and readonly interfaces
+- **Single responsibility** - Each class should have one clear purpose
