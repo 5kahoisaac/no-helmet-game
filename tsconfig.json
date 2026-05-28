@@ -3,13 +3,13 @@
     "target": "ES2020",
     "module": "ES2020",
     "moduleResolution": "node",
-    "outDir": "./docs",
-    "rootDir": "./docs",
+    "outDir": "./",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["docs/**/*"],
+  "include": ["game.ts",],
   "exclude": ["node_modules", "dist"]
 }
