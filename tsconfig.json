@@ -3,13 +3,13 @@
     "target": "ES2020",
     "module": "ES2020",
     "moduleResolution": "node",
-    "outDir": "./src",
-    "rootDir": "./src",
+    "outDir": "./docs",
+    "rootDir": "./docs",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
+  "include": ["docs/**/*"],
   "exclude": ["node_modules", "dist"]
 }
