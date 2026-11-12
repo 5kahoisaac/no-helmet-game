@@ -28,13 +28,16 @@ jobs:
         run: |
           test -n "$R2_ENDPOINT" || { echo "Missing R2 endpoint: set R2_ENDPOINT or R2_API_URL in the production environment."; exit 1; }
           test -n "$R2_BUCKET" || { echo "Missing R2 bucket: set R2_BUCKET in the production environment."; exit 1; }
+          test -n "$R2_PREFIX" || { echo "Missing R2 folder: set R2_PREFIX or R2_FOLDER in the production environment."; exit 1; }
           test -n "$AWS_ACCESS_KEY_ID" || { echo "Missing R2 access key: set R2_ACCESS_KEY_ID or R2_API_KEY in the production environment."; exit 1; }
           test -n "$AWS_SECRET_ACCESS_KEY" || { echo "Missing R2 secret: set R2_SECRET_ACCESS_KEY or R2_SECRET in the production environment."; exit 1; }
 
           destination="s3://${R2_BUCKET}"
-          if [ -n "$R2_PREFIX" ]; then
-            destination="${destination}/${R2_PREFIX}"
-          fi
+          destination="${destination}/${R2_PREFIX}"
+
+          aws s3 rm "${destination}/" \
+            --recursive \
+            --endpoint-url "$R2_ENDPOINT"
 
           aws s3 cp index.html "${destination}/index.html" \
             --endpoint-url "$R2_ENDPOINT"
