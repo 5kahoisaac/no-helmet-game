@@ -29,9 +29,8 @@ jobs:
 
       - name: Upload files to R2
         run: |
-          aws s3 sync . "s3://${{ vars.R2_BUCKET }}/${{ vars.R2_PREFIX }}" \
-            --endpoint-url "${{ vars.R2_ENDPOINT }}" \
-            --delete \
-            --exclude ".git/*" \
-            --exclude ".github/*" \
-            --exclude "node_modules/*"
+          destination="s3://${{ vars.R2_BUCKET }}/${{ vars.R2_PREFIX }}"
+          aws s3 cp index.html "${destination}/index.html" \
+            --endpoint-url "${{ vars.R2_ENDPOINT }}"
+          aws s3 cp game.js "${destination}/game.js" \
+            --endpoint-url "${{ vars.R2_ENDPOINT }}"
